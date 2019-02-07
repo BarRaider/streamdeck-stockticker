@@ -1,0 +1,34 @@
+{
+  "Actions": [
+    {
+      "Icon": "Images/icon",
+      "Name": "Stock Ticker",
+      "States": [
+        {
+          "Image": "Images/spot",
+          "TitleAlignment": "bottom",
+          "FontSize": "14"
+        }
+      ],
+      "SupportedInMultiActions": true,
+      "Tooltip": "Get live quotes on all your favorite stocks, directly on the Stream Deck",
+      "UUID": "com.barraider.stockticker",
+      "PropertyInspectorPath": "PropertyInspector/Stockticker/Stockticker.html"
+    }
+  ],
+  "Author": "BarRaider",
+  "Description": "Get live quotes on all your favorite stocks, directly on the Stream Deck",
+  "Name": "Stock Ticker",
+  "Icon": "Images/pluginIcon",
+  "URL": "https://barraider.github.io/",
+  "Version": "0.91",
+  "CodePath": "com.barraider.stockticker.exe",
+  "Category": "BarRaider",
+  "CategoryIcon": "Images/categoryIcon",
+  "OS": [
+    {
+      "Platform": "windows",
+      "MinimumVersion": "10"
+    }
+  ]
+}
