@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>net472</TargetFramework>
     <ApplicationIcon />
     <StartupObject>StockTicker.Program</StartupObject>
     <AssemblyName>com.barraider.stockticker</AssemblyName>
@@ -19,17 +19,17 @@
     <OutputPath>bin\release\com.barraider.stockticker.dll</OutputPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <OutputPath>bin\release\com.barraider.stockticker.dll</OutputPath>
+    <OutputPath>bin\release\com.barraider.stockticker.sdplugin</OutputPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <OutputPath>bin\debug\com.barraider.stockticker.dll</OutputPath>
+    <OutputPath>bin\debug\com.barraider.stockticker.sdplugin</OutputPath>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Packaging.Tools.Trimming" Version="1.1.0-preview1-26619-01" />
+    <PackageReference Include="StreamDeck-Tools" Version="1.1.1" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.6.0-preview.19073.11" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\barraider-sdtools\barraider-sdtools\barraider-sdtools.csproj" />
     <ProjectReference Include="..\..\barraider-stockticker\barraider-stockticker\barraider-stockticker.csproj" />
   </ItemGroup>
   <ItemGroup>
@@ -76,11 +76,4 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-  <Target Name="GenerateNetcoreExe" AfterTargets="Build" Condition="'$(IsNestedBuild)' != 'true'">
-    <Exec Command="echo $(ProjectDir)$(PublishFolder)" />
-    <RemoveDir Directories="$(PublishFolder)" />
-    <Exec ConsoleToMSBuild="true" Command="dotnet publish $(ProjectPath) -r win-x64 /p:CopyLocalLockFileAssemblies=false;IsNestedBuild=true --output $(ProjectDir)$(PublishFolder)">
-      <Output TaskParameter="ConsoleOutput" PropertyName="OutputOfExec" />
-    </Exec>
-  </Target>
 </Project>

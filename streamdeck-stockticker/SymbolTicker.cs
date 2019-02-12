@@ -39,6 +39,8 @@ namespace StockTicker
 
         private PluginSettings settings;
         private DateTime lastRefresh;
+        private bool showDetails = false;
+        private SymbolData stockData;
 
         #endregion
 
@@ -63,8 +65,10 @@ namespace StockTicker
         {
         }
 
-        public override void KeyPressed()
+        public async override void KeyPressed()
         {
+            showDetails = !showDetails;
+            await DrawSymbolData(stockData);
         }
 
         public override void KeyReleased()
@@ -73,7 +77,6 @@ namespace StockTicker
 
         public override async void OnTick()
         {
-            Logger.Instance.LogMessage(TracingLevel.INFO, $"OnTick Start");
             if (String.IsNullOrWhiteSpace(settings.SymbolName))
             {
                 await Connection.SetImageAsync(System.Configuration.ConfigurationManager.AppSettings["SymbolNotSet"]);
@@ -85,10 +88,10 @@ namespace StockTicker
                 try
                 {
                     lastRefresh = DateTime.Now;
-                    SymbolData data = await StockManager.Instance.GetSymbol(settings.SymbolName);
-                    if (data != null)
+                    stockData = await StockManager.Instance.GetSymbol(settings.SymbolName);
+                    if (stockData != null)
                     {
-                        await DrawSymbolData(data);
+                        await DrawSymbolData(stockData);
                     }
                     else
                     {
@@ -101,7 +104,6 @@ namespace StockTicker
                 }
 
             }
-            Logger.Instance.LogMessage(TracingLevel.INFO, $"OnTick End");
         }
 
         public override async void UpdateSettings(JObject payload)
@@ -134,46 +136,48 @@ namespace StockTicker
 
         private async Task DrawSymbolData(SymbolData data)
         {
-            Logger.Instance.LogMessage(TracingLevel.INFO, $"DrawSymbolData Start");
             try
             {
-                //MemoryStream ms = GenerateSymbolChart(data);
-                //Image imgChart = Image.FromStream(ms);
-                //Graphics graphicsChart = Graphics.FromImage(imgChart);
                 Graphics graphics;
                 Bitmap bmp = Tools.GenerateKeyImage(out graphics);
+                SizeF stringSize;
+                float stringPos;
                 string stockArrow = UP_ARROW;
                 Brush stockBrush = Brushes.Green;
                 var fontDefault = new Font("Verdana", 10, FontStyle.Bold);
                 var fontStock = new Font("Verdana", 8, FontStyle.Bold);
+                var fontDetails = new Font("Verdana", 7, FontStyle.Regular);
 
-                //graphics.DrawImage(imgChart, 0, 0, Tools.KEY_DEFAULT_WIDTH, Tools.KEY_DEFAULT_HEIGHT);
-
-                SizeF size = graphics.MeasureString(data.SymbolName, fontDefault);
-                float pos = Math.Abs((Tools.KEY_DEFAULT_WIDTH - size.Width)) / 2;
-                graphics.DrawString(data.SymbolName, fontDefault, Brushes.White, new PointF(pos, 5));
-
-                if (data.Quote.Change < 0)
+                if (showDetails) // Show market details
                 {
-                    stockArrow = DOWN_ARROW;
-                    stockBrush = Brushes.Red;
+                    string details = $"Close:\r\n  {data.Quote.Close}\r\nHigh:\r\n  {data.Quote.High}\r\nLow:\r\n  {data.Quote.Low}";
+                    graphics.DrawString(details, fontDetails, Brushes.LightGray, new PointF(0, 5));
                 }
-                string stockStr = $"{data.Quote.LatestPrice}\r\n({(data.Quote.ChangePercent * 100).ToString("0.00")}%)";
-                size = graphics.MeasureString(stockStr, fontStock);
-                pos = Math.Abs((Tools.KEY_DEFAULT_WIDTH - size.Width)) / 2;
+                else
+                {
+                    stringSize = graphics.MeasureString(data.SymbolName, fontDefault);
+                    stringPos = Math.Abs((Tools.KEY_DEFAULT_WIDTH - stringSize.Width)) / 2;
+                    graphics.DrawString(data.SymbolName, fontDefault, Brushes.White, new PointF(stringPos, 5));
 
-                graphics.DrawString(stockStr, fontStock, stockBrush, new PointF(pos, 25));
-                graphics.DrawString(stockArrow, fontStock, stockBrush, new PointF(Tools.KEY_DEFAULT_WIDTH / 2 - 5, 25 + size.Height));
+                    if (data.Quote.Change < 0)
+                    {
+                        stockArrow = DOWN_ARROW;
+                        stockBrush = Brushes.Red;
+                    }
+                    string stockStr = $"{data.Quote.LatestPrice}\r\n({(data.Quote.ChangePercent * 100).ToString("0.00")}%)";
+                    stringSize = graphics.MeasureString(stockStr, fontStock);
+                    stringPos = Math.Abs((Tools.KEY_DEFAULT_WIDTH - stringSize.Width)) / 2;
+
+                    graphics.DrawString(stockStr, fontStock, stockBrush, new PointF(stringPos, 25));
+                    graphics.DrawString(stockArrow, fontStock, stockBrush, new PointF(Tools.KEY_DEFAULT_WIDTH / 2 - 5, 25 + stringSize.Height));
+                }
                 string imgBase64 = Tools.ImageToBase64(bmp, true);
                 await Connection.SetImageAsync(imgBase64);
-                //bmp.Save($"{data.SymbolName}{DateTime.Now.ToString("HHmmss")}.png");
-                //imgChart.Save($"{data.SymbolName}{DateTime.Now.ToString("HH:mm:ss")}.png");
             }
             catch (Exception ex)
             {
                 Logger.Instance.LogMessage(TracingLevel.ERROR, $"DrawSymbolData Exception: {ex}");
             }
-            Logger.Instance.LogMessage(TracingLevel.INFO, $"DrawSymbolData End");
         }
 
         #endregion

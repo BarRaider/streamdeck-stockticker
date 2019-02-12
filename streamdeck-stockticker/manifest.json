@@ -21,7 +21,7 @@
   "Name": "Stock Ticker",
   "Icon": "Images/pluginIcon",
   "URL": "https://barraider.github.io/",
-  "Version": "0.91",
+  "Version": "1.0",
   "CodePath": "com.barraider.stockticker.exe",
   "Category": "BarRaider",
   "CategoryIcon": "Images/categoryIcon",

@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.106
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "streamdeck-stockticker", "streamdeck-stockticker\streamdeck-stockticker.csproj", "{F2B6AF58-762D-48D6-BF54-F83221527939}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StockTicker", "streamdeck-stockticker\StockTicker.csproj", "{BCE91169-8B8F-41DE-BAD4-C61DC9290CEF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "barraider-stockticker", "..\barraider-stockticker\barraider-stockticker\barraider-stockticker.csproj", "{8FFB4509-8FB1-4C4F-8BEA-3A96C1E6AEFA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +13,14 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{F2B6AF58-762D-48D6-BF54-F83221527939}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F2B6AF58-762D-48D6-BF54-F83221527939}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F2B6AF58-762D-48D6-BF54-F83221527939}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F2B6AF58-762D-48D6-BF54-F83221527939}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BCE91169-8B8F-41DE-BAD4-C61DC9290CEF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BCE91169-8B8F-41DE-BAD4-C61DC9290CEF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BCE91169-8B8F-41DE-BAD4-C61DC9290CEF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BCE91169-8B8F-41DE-BAD4-C61DC9290CEF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8FFB4509-8FB1-4C4F-8BEA-3A96C1E6AEFA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8FFB4509-8FB1-4C4F-8BEA-3A96C1E6AEFA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8FFB4509-8FB1-4C4F-8BEA-3A96C1E6AEFA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8FFB4509-8FB1-4C4F-8BEA-3A96C1E6AEFA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
