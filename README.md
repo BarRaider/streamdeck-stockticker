@@ -5,7 +5,7 @@
 <img src="/_images/ticker.jpg">
 
 ## Features
-* View live(!) quotes of your favorite stocks, live on the stream deck
+* View live(!) quotes of your favorite stocks, directly on the stream deck
 * Press the Stream Deck key to see additional information (Prev. Close, Today's High/Low prices)
 * Customizable refresh rate from every 1 second, up to every 1 hour.
 
