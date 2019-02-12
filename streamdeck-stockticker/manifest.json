@@ -11,13 +11,13 @@
         }
       ],
       "SupportedInMultiActions": true,
-      "Tooltip": "Get live quotes on all your favorite stocks, directly on the Stream Deck",
+      "Tooltip": "View live(!) quotes of your favorite stocks, directly on the Stream Deck",
       "UUID": "com.barraider.stockticker",
       "PropertyInspectorPath": "PropertyInspector/Stockticker/Stockticker.html"
     }
   ],
   "Author": "BarRaider",
-  "Description": "Get live quotes on all your favorite stocks, directly on the Stream Deck",
+  "Description": "View live(!) quotes of your favorite stocks, directly on the Stream Deck",
   "Name": "Stock Ticker",
   "Icon": "Images/pluginIcon",
   "URL": "https://barraider.github.io/",
