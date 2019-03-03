@@ -11,16 +11,16 @@
 <body>
     <div class="sdpi-wrapper">
         <details class="message">
-            <summary>For feedback/suggestions contact me at <a href="https://BarRaider.github.io" target="_blank" onclick="openWebsite()">https://BarRaider.github.io</a> </summary>
+            <summary>For feedback/suggestions contact me at <span class="linkspan" onclick="openWebsite()">https://BarRaider.github.io</span> </summary>
         </details>
         <div class="sdpi-item">
             <div class="sdpi-item-label">Stock Symbol</div>
-            <input class="sdpi-item-value" placeholder="i.e AMZN/FB/GOOG" value="" id="symbolName" oninput="updateSettings()">
+            <input class="sdpi-item-value sdProperty" placeholder="i.e AMZN/FB/GOOG" value="" id="symbolName" oninput="setSettings()">
         </div>
 
         <div class="sdpi-item">
             <div class="sdpi-item-label">Refresh Rate</div>
-            <select class="sdpi-item-value select" id="refreshSeconds" oninput="updateSettings()">
+            <select class="sdpi-item-value select sdProperty" id="refreshSeconds" oninput="setSettings()">
                 <option value="1">1 Second</option>
                 <option value="15">15 Seconds</option>
                 <option value="30">30 Seconds</option>
@@ -33,6 +33,6 @@
             </select>
         </div>
     </div>
-    <script src="../Stockticker.js"></script>
+    <script src="../sdtools.common.js"></script>
 </body>
 </html>

@@ -1,0 +1,106 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no,minimal-ui,viewport-fit=cover">
+    <meta name=apple-mobile-web-app-capable content=yes>
+    <meta name=apple-mobile-web-app-status-bar-style content=black>
+    <title>BarRaider's Currency Ticker</title>
+    <link rel="stylesheet" href="../sdpi.css">
+</head>
+<body>
+    <div class="sdpi-wrapper">
+        <details class="message">
+            <summary>For feedback/suggestions contact me at <span class="linkspan" onclick="openWebsite()">https://BarRaider.github.io</span> </summary>
+        </details>
+        <div class="sdpi-item">
+            <div class="sdpi-item-label">Base Currency</div>
+            <select class="sdpi-item-value select sdProperty" id="baseCurrency" oninput="setSettings()">
+                <option value="AUD">AUD</option>
+                <option value="BGN">BGN</option>
+                <option value="BRL">BRL</option>
+                <option value="CAD">CAD</option>
+                <option value="CHF">CHF</option>
+                <option value="CNY">CNY</option>
+                <option value="CZK">CZK</option>
+                <option value="DKK">DKK</option>
+                <option value="EUR">EUR</option>
+                <option value="GBP">GBP</option>
+                <option value="HKD">HKD</option>
+                <option value="HRK">HRK</option>
+                <option value="HUF">HUF</option>
+                <option value="IDR">IDR</option>
+                <option value="ILS">ILS</option>
+                <option value="INR">INR</option>
+                <option value="ISK">ISK</option>
+                <option value="JPY">JPY</option>
+                <option value="KRW">KRW</option>
+                <option value="MXN">MXN</option>
+                <option value="MYR">MYR</option>
+                <option value="NOK">NOK</option>
+                <option value="NZD">NZD</option>
+                <option value="PHP">PHP</option>
+                <option value="PLN">PLN</option>
+                <option value="RON">RON</option>
+                <option value="RUB">RUB</option>
+                <option value="SEK">SEK</option>
+                <option value="SGD">SGD</option>
+                <option value="THB">THB</option>
+                <option value="TRY">TRY</option>
+                <option value="USD" selected>USD</option>
+                <option value="ZAR">ZAR</option>
+            </select>
+        </div>
+
+        <div class="sdpi-item">
+            <div class="sdpi-item-label">Symbol</div>
+            <select class="sdpi-item-value select sdProperty" id="symbol" oninput="setSettings()">
+                <option value="AUD">AUD</option>
+                <option value="BGN">BGN</option>
+                <option value="BRL">BRL</option>
+                <option value="CAD">CAD</option>
+                <option value="CHF">CHF</option>
+                <option value="CNY">CNY</option>
+                <option value="CZK">CZK</option>
+                <option value="DKK">DKK</option>
+                <option value="EUR" selected>EUR</option>
+                <option value="GBP">GBP</option>
+                <option value="HKD">HKD</option>
+                <option value="HRK">HRK</option>
+                <option value="HUF">HUF</option>
+                <option value="IDR">IDR</option>
+                <option value="ILS">ILS</option>
+                <option value="INR">INR</option>
+                <option value="ISK">ISK</option>
+                <option value="JPY">JPY</option>
+                <option value="KRW">KRW</option>
+                <option value="MXN">MXN</option>
+                <option value="MYR">MYR</option>
+                <option value="NOK">NOK</option>
+                <option value="NZD">NZD</option>
+                <option value="PHP">PHP</option>
+                <option value="PLN">PLN</option>
+                <option value="RON">RON</option>
+                <option value="RUB">RUB</option>
+                <option value="SEK">SEK</option>
+                <option value="SGD">SGD</option>
+                <option value="THB">THB</option>
+                <option value="TRY">TRY</option>
+                <option value="USD">USD</option>
+                <option value="ZAR">ZAR</option>
+            </select>
+        </div>
+
+        <div type="color" class="sdpi-item" id="dvForground">
+            <div class="sdpi-item-label">Foreground</div>
+            <input type="color" class="sdpi-item-value sdProperty" value="#000000" id="foregroundColor" oninput="setSettings()">
+        </div>
+
+        <div type="color" class="sdpi-item" id="dvBackground">
+            <div class="sdpi-item-label">Background</div>
+            <input type="color" class="sdpi-item-value sdProperty" value="#ffffff" id="backgroundColor" oninput="setSettings()">
+        </div>
+    </div>
+    <script src="../sdtools.common.js"></script>
+</body>
+</html>

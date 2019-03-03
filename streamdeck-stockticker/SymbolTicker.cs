@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 
 namespace StockTicker
 {
+    [PluginActionId("com.barraider.stockticker")]
     public class SymbolTicker : PluginBase
     {
         private class PluginSettings
@@ -41,20 +42,22 @@ namespace StockTicker
         private DateTime lastRefresh;
         private bool showDetails = false;
         private SymbolData stockData;
+        private StockComm stockComm = new StockComm();
 
         #endregion
 
         #region Public Methods
 
-        public SymbolTicker(SDConnection connection, JObject settings) : base(connection, settings)
+        public SymbolTicker(SDConnection connection, InitialPayload payload) : base(connection, payload)
         {
-            if (settings == null || settings.Count == 0)
+            if (payload.Settings == null || payload.Settings.Count == 0)
             {
                 this.settings = PluginSettings.CreateDefaultSettings();
+                Connection.SetSettingsAsync(JObject.FromObject(settings));
             }
             else
             {
-                this.settings = settings.ToObject<PluginSettings>();
+                this.settings = payload.Settings.ToObject<PluginSettings>();
             }
         }
 
@@ -65,13 +68,13 @@ namespace StockTicker
         {
         }
 
-        public async override void KeyPressed()
+        public async override void KeyPressed(KeyPayload payload)
         {
             showDetails = !showDetails;
             await DrawSymbolData(stockData);
         }
 
-        public override void KeyReleased()
+        public override void KeyReleased(KeyPayload payload)
         {
         }
 
@@ -88,7 +91,7 @@ namespace StockTicker
                 try
                 {
                     lastRefresh = DateTime.Now;
-                    stockData = await StockManager.Instance.GetSymbol(settings.SymbolName);
+                    stockData = await stockComm.GetSymbol(settings.SymbolName);
                     if (stockData != null)
                     {
                         await DrawSymbolData(stockData);
@@ -106,29 +109,14 @@ namespace StockTicker
             }
         }
 
-        public override async void UpdateSettings(JObject payload)
+        public override void ReceivedSettings(ReceivedSettingsPayload payload)
         {
-            if (payload["property_inspector"] != null)
-            {
-                switch (payload["property_inspector"].ToString().ToLower())
-                {
-                    case "propertyinspectorconnected":
-                        await Connection.SendToPropertyInspectorAsync(JObject.FromObject(settings));
-                        break;
+            Tools.AutoPopulateSettings(settings, payload.Settings);
+            lastRefresh = DateTime.MinValue;
+        }
 
-                    case "propertyinspectorwilldisappear":
-                        await Connection.SetSettingsAsync(JObject.FromObject(settings));
-                        break;
-
-                    case "updatesettings":
-                        settings.SymbolName = (string)payload["symbolName"];
-                        settings.RefreshSeconds = (int)payload["refreshSeconds"];
-                        lastRefresh = DateTime.MinValue;
-                        await Connection.SetSettingsAsync(JObject.FromObject(settings));
-                        await Connection.SendToPropertyInspectorAsync(JObject.FromObject(settings));
-                        break;
-                }
-            }
+        public override void ReceivedGlobalSettings(ReceivedGlobalSettingsPayload payload)
+        {
         }
         #endregion
 
@@ -179,7 +167,6 @@ namespace StockTicker
                 Logger.Instance.LogMessage(TracingLevel.ERROR, $"DrawSymbolData Exception: {ex}");
             }
         }
-
         #endregion
     }
 }

@@ -14,15 +14,30 @@
       "Tooltip": "View live(!) quotes of your favorite stocks, directly on the Stream Deck",
       "UUID": "com.barraider.stockticker",
       "PropertyInspectorPath": "PropertyInspector/Stockticker/Stockticker.html"
+    },
+    {
+      "Icon": "Images/curricon",
+      "Name": "Currency Converter",
+      "States": [
+        {
+          "Image": "Images/curr",
+          "TitleAlignment": "bottom",
+          "FontSize": "14"
+        }
+      ],
+      "SupportedInMultiActions": true,
+      "Tooltip": "View live currency exchange between two currencies",
+      "UUID": "com.barraider.currencyexchange",
+      "PropertyInspectorPath": "PropertyInspector/Stockticker/Currency.html"
     }
   ],
   "Author": "BarRaider",
-  "Description": "View live(!) quotes of your favorite stocks, directly on the Stream Deck",
-  "Name": "Stock Ticker",
+  "Description": "View live quotes of your favorite stocks, directly on the Stream Deck\r\nNew: Now includes a new Currency Converter plugin, see live currency exchange between two currencies",
+  "Name": "Stock & Currency",
   "Icon": "Images/pluginIcon",
   "URL": "https://barraider.github.io/",
-  "Version": "1.0",
-  "CodePath": "com.barraider.stockticker.exe",
+  "Version": "1.2",
+  "CodePathWin": "com.barraider.stockticker.exe",
   "Category": "BarRaider",
   "CategoryIcon": "Images/categoryIcon",
   "OS": [
@@ -30,5 +45,9 @@
       "Platform": "windows",
       "MinimumVersion": "10"
     }
-  ]
+  ],
+  "SDKVersion": 2,
+  "Software": {
+    "MinimumVersion": "4.1"
+  }
 }
