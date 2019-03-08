@@ -15,7 +15,13 @@
 * Quotes have a customizable refresh rate from every 1 second, up to every 1 hour.
 
 ## Download
-https://github.com/BarRaider/streamdeck-stockticker/releases/download/v1.0/com.barraider.stockticker.streamDeckPlugin
+https://github.com/BarRaider/streamdeck-stockticker/releases/download/v1.2/com.barraider.stockticker.streamDeckPlugin
 
 ## Dependencies
 Uses StreamDeck-Tools by BarRaider: [![NuGet](https://img.shields.io/nuget/v/streamdeck-tools.svg?style=flat)](https://www.nuget.org/packages/streamdeck-tools)
+
+## I found a bug, who do I contact?
+For support please contact the developer. Contact information is available at https://barraider.github.io
+
+## I have a feature request, who do I contact?
+Please contact the developer. Contact information is available at https://barraider.github.io
