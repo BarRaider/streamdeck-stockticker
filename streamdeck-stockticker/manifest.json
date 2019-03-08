@@ -10,7 +10,7 @@
           "FontSize": "14"
         }
       ],
-      "SupportedInMultiActions": true,
+      "SupportedInMultiActions": false,
       "Tooltip": "View live(!) quotes of your favorite stocks, directly on the Stream Deck",
       "UUID": "com.barraider.stockticker",
       "PropertyInspectorPath": "PropertyInspector/Stockticker/Stockticker.html"
@@ -25,7 +25,7 @@
           "FontSize": "14"
         }
       ],
-      "SupportedInMultiActions": true,
+      "SupportedInMultiActions": false,
       "Tooltip": "View live currency exchange between two currencies",
       "UUID": "com.barraider.currencyexchange",
       "PropertyInspectorPath": "PropertyInspector/Stockticker/Currency.html"
