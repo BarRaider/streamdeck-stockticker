@@ -1,4 +1,3 @@
-﻿// sdtools.common.js v0.8.2
 var websocket = null,
     uuid = null,
     registerEventName = null,
@@ -58,62 +57,50 @@ function websocketOnMessage(evt) {
 function loadConfiguration(payload) {
     console.log('loadConfiguration');
     console.log(payload);
-    for (var key in payload) {
-        try {
-            var elem = document.getElementById(key);
-            if (elem.classList.contains("sdCheckbox")) { // Checkbox
-                elem.checked = payload[key];
-            }
-            else if (elem.classList.contains("sdFile")) { // File
-                var elemFile = document.getElementById(elem.id + "Filename");
-                elemFile.innerText = payload[key];
-                if (!elemFile.innerText) {
-                    elemFile.innerText = "No file...";
-                }
-            }
-            else if (elem.classList.contains("sdHiddenArray")) { // Hidden field that holds an array
-                elem.value = JSON.stringify(payload[key])
-            }
-            else { // Normal value
-                elem.value = payload[key];
-            }
-            console.log("Load: " + key + "=" + payload[key]);
-        }
-        catch (err) {
-            console.log("loadConfiguration failed for key: " + key + " - " + err);
-        }
+
+    var foregroundColor = document.getElementById('foregroundColor');
+    foregroundColor.value = payload['foregroundColor'];
+
+    var backgroundColor = document.getElementById('backgroundColor');
+    backgroundColor.value = payload['backgroundColor'];
+
+    if (payload['currencies']) {
+        var currencies = document.getElementById('baseCurrency');
+        populateListbox(currencies, payload['currencies']);
+        currencies.value = payload['currenciesSelected'];
     }
+
+    if (payload['quotes']) {
+        var quotes = document.getElementById('quote');
+        populateListbox(quotes, payload['quotes']);
+        quotes.value = payload['quotesSelected'];
+    }
+}
+
+function populateListbox(listbox, items) {
+    console.log('Populating listbox');
+    listbox.options.length = 0;
+    for (var idx = 0; idx < items.length; idx++) {
+        var opt = document.createElement('option');
+        opt.value = items[idx];
+        opt.text = items[idx];
+        listbox.appendChild(opt);
+    }
+    console.log('Populated: ' + listbox.options.length);
 }
 
 function setSettings() {
     var payload = {};
-    var elements = document.getElementsByClassName("sdProperty");
+    var foregroundColor = document.getElementById('foregroundColor');
+    var backgroundColor = document.getElementById('backgroundColor');
+    var currencies = document.getElementById('baseCurrency');
+    var quotes = document.getElementById('quote');
 
-    Array.prototype.forEach.call(elements, function (elem) {
-        var key = elem.id;
-        if (elem.classList.contains("sdCheckbox")) { // Checkbox
-            payload[key] = elem.checked;
-        }
-        else if (elem.classList.contains("sdFile")) { // File
-            var elemFile = document.getElementById(elem.id + "Filename");
-            payload[key] = elem.value;
-            if (!elem.value) {
-                // Fetch innerText if file is empty (happens when we lose and regain focus to this key)
-                payload[key] = elemFile.innerText;
-            }
-            else {
-                // Set value on initial file selection
-                elemFile.innerText = elem.value;
-            }
-        }
-        else if (elem.classList.contains("sdHiddenArray")) { // Hidden field that holds an array
-            payload[key] = JSON.parse(elem.value);
-        }
-        else { // Normal value
-            payload[key] = elem.value;
-        }
-        console.log("Save: " + key + "<=" + payload[key]);
-    });
+    payload.foregroundColor = foregroundColor.value;
+    payload.backgroundColor = backgroundColor.value;
+    payload.currenciesSelected = currencies.value;
+    payload.quotesSelected = quotes.value;
+
     setSettingsToPlugin(payload);
 }
 

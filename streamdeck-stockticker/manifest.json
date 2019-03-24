@@ -29,14 +29,29 @@
       "Tooltip": "View live currency exchange between two currencies",
       "UUID": "com.barraider.currencyexchange",
       "PropertyInspectorPath": "PropertyInspector/Stockticker/Currency.html"
+    },
+    {
+      "Icon": "Images/cryptoicon",
+      "Name": "CryptoCurrency Ticker",
+      "States": [
+        {
+          "Image": "Images/crypto",
+          "TitleAlignment": "bottom",
+          "FontSize": "14"
+        }
+      ],
+      "SupportedInMultiActions": false,
+      "Tooltip": "View live cryptocurrencies",
+      "UUID": "com.barraider.cryptoticker",
+      "PropertyInspectorPath": "PropertyInspector/Stockticker/Crypto.html"
     }
   ],
   "Author": "BarRaider",
-  "Description": "View live quotes of your favorite stocks, directly on the Stream Deck\r\nNew: Now includes a new Currency Converter plugin, see live currency exchange between two currencies",
+  "Description": "View live quotes of your favorite stocks, directly on the Stream Deck\r\nNew: Now supports Currencies and CryptoCurrencies",
   "Name": "Stock & Currency",
   "Icon": "Images/pluginIcon",
   "URL": "https://barraider.github.io/",
-  "Version": "1.2",
+  "Version": "1.3",
   "CodePathWin": "com.barraider.stockticker.exe",
   "Category": "BarRaider",
   "CategoryIcon": "Images/categoryIcon",
