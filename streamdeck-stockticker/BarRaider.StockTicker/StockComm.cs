@@ -1,12 +1,9 @@
 ﻿using BarRaider.SdTools;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BarRaider.StockTicker
@@ -14,15 +11,31 @@ namespace BarRaider.StockTicker
     internal class StockComm
     {
         private const string CURRENCY_FETCH_URI = "https://api.exchangeratesapi.io/latest?base={0}&symbols={1}";
-        private const string STOCK_URI_PREFIX = "https://api.iextrading.com/1.0/stock/";
+        //private const string STOCK_URI_PREFIX = "https://api.iextrading.com/1.0/stock/";
+        private const string STOCK_URI_PREFIX = "https://cloud.iexapis.com/stable/stock/";
         private const string STOCK_BATCH_CHART_QUOTE = "market/batch";
         private const string CHART_DAILY = "1m";
         private const string CHART_MINUTE = "1d";
         private const int DEFAULT_CHART_POINTS = 36;
 
+        public bool TokenExists
+        {
+            get
+            {
+                return TokenManager.Instance.TokenExists;
+            }
+        }
+
         public async Task<SymbolData> GetSymbol(string stockSymbol)
         {
+            if (!TokenExists)
+            {
+                Logger.Instance.LogMessage(TracingLevel.WARN, "GetSymbol was called without a valid token");
+                return null;
+            }
+
             var kvp = new List<KeyValuePair<string, string>>();
+            kvp.Add(new KeyValuePair<string, string>("token", TokenManager.Instance.Token.StockToken));
             kvp.Add(new KeyValuePair<string, string>("symbols", stockSymbol));
             kvp.Add(new KeyValuePair<string, string>("types", "quote")); // Remove chart as of now
             //kvp.Add(new KeyValuePair<string, string>("types", "quote,chart"));
@@ -62,10 +75,20 @@ namespace BarRaider.StockTicker
             else
             {
                 Logger.Instance.LogMessage(TracingLevel.ERROR, $"GetSymbol invalid response: {response.StatusCode}");
+
+                if (response.StatusCode == System.Net.HttpStatusCode.Forbidden)
+                {
+                    TokenManager.Instance.SetTokenFailed();
+                }
             }
             return null;
         }
 
+        public void SetStockToken(string token)
+        {
+            TokenManager.Instance.InitTokens(token, DateTime.Now);
+        }
+        
         public async Task<JObject> FetchCurrencyData(string baseCurrency, string symbol)
         {
             try

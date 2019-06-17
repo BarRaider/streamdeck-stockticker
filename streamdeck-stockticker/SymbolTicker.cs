@@ -22,6 +22,7 @@ namespace StockTicker
                 PluginSettings instance = new PluginSettings();
                 instance.SymbolName = String.Empty;
                 instance.RefreshSeconds = 60;
+                instance.ApiToken = String.Empty;
 
                 return instance;
             }
@@ -31,11 +32,15 @@ namespace StockTicker
 
             [JsonProperty(PropertyName = "refreshSeconds")]
             public int RefreshSeconds { get; set; }
+
+            [JsonProperty(PropertyName = "apiToken")]
+            public string ApiToken { get; set; }
         }
         #region Private members
 
         private const string UP_ARROW = "↑";
         private const string DOWN_ARROW = "↓";
+        private const string HIDDEN_API_TOKEN = "*****";
 
 
         private PluginSettings settings;
@@ -53,11 +58,20 @@ namespace StockTicker
             if (payload.Settings == null || payload.Settings.Count == 0)
             {
                 this.settings = PluginSettings.CreateDefaultSettings();
-                Connection.SetSettingsAsync(JObject.FromObject(settings));
+                if (stockComm.TokenExists)
+                {
+                    this.settings.ApiToken = HIDDEN_API_TOKEN;
+                }
+                SaveSettings();
             }
             else
             {
                 this.settings = payload.Settings.ToObject<PluginSettings>();
+                if (stockComm.TokenExists && settings.ApiToken != HIDDEN_API_TOKEN)
+                {
+                    this.settings.ApiToken = HIDDEN_API_TOKEN;
+                    SaveSettings();
+                }
             }
         }
 
@@ -80,9 +94,15 @@ namespace StockTicker
 
         public override async void OnTick()
         {
+            if (!TokenManager.Instance.TokenExists)
+            {
+                await Connection.SetImageAsync(Properties.Settings.Default.StockNoToken);
+                return;
+            }
+
             if (String.IsNullOrWhiteSpace(settings.SymbolName))
             {
-                await Connection.SetImageAsync(System.Configuration.ConfigurationManager.AppSettings["SymbolNotSet"]);
+                await Connection.SetImageAsync(Properties.Settings.Default.SymbolNotSet);
                 return;
             }
 
@@ -109,10 +129,20 @@ namespace StockTicker
             }
         }
 
-        public override void ReceivedSettings(ReceivedSettingsPayload payload)
+        public async override void ReceivedSettings(ReceivedSettingsPayload payload)
         {
+            string apiToken = settings.ApiToken;
             Tools.AutoPopulateSettings(settings, payload.Settings);
             lastRefresh = DateTime.MinValue;
+            if (apiToken != settings.ApiToken)
+            {
+                if (settings.ApiToken != HIDDEN_API_TOKEN)
+                {
+                    stockComm.SetStockToken(settings.ApiToken);
+                }
+                settings.ApiToken = HIDDEN_API_TOKEN;
+                await SaveSettings();
+            }
         }
 
         public override void ReceivedGlobalSettings(ReceivedGlobalSettingsPayload payload)
@@ -166,6 +196,11 @@ namespace StockTicker
             {
                 Logger.Instance.LogMessage(TracingLevel.ERROR, $"DrawSymbolData Exception: {ex}");
             }
+        }
+
+        private async Task SaveSettings()
+        {
+            await Connection.SetSettingsAsync(JObject.FromObject(settings));
         }
         #endregion
     }

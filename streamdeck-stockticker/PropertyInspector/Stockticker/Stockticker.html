@@ -7,12 +7,22 @@
     <meta name=apple-mobile-web-app-status-bar-style content=black>
     <title>BarRaider's Stockticker plugin</title>
     <link rel="stylesheet" href="../sdpi.css">
+    <script src="../sdtools.common.js"></script>
+    <script src="../Stockticker.js"></script>
 </head>
 <body>
     <div class="sdpi-wrapper">
         <details class="message">
             <summary>For feedback/suggestions contact me at <span class="linkspan" onclick="openWebsite()">https://BarRaider.github.io</span> </summary>
         </details>
+        <details class="message">
+            <summary>NOTE: An API key is now required (click here for more instructions)</summary>
+            <p>The provider of the data we use (iexcloud.io) now requires a Free API token. I am working on finding a free solution that does not require an API token. In the mean time, <span class="linkspan" onclick="openStockWebsite()">Click here</span> for details on how to get a free one from iexcloud.io. </p>
+        </details>
+        <div class="sdpi-item">
+            <div class="sdpi-item-label">iexcloud.io API key</div>
+            <input class="sdpi-item-value sdProperty" placeholder="pk_abcdef01234567890" value="" id="apiToken" oninput="setSettings()">
+        </div>
         <div class="sdpi-item">
             <div class="sdpi-item-label">Stock Symbol</div>
             <input class="sdpi-item-value sdProperty" placeholder="i.e AMZN/FB/GOOG" value="" id="symbolName" oninput="setSettings()">
@@ -33,6 +43,5 @@
             </select>
         </div>
     </div>
-    <script src="../sdtools.common.js"></script>
 </body>
 </html>

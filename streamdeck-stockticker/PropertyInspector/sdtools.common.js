@@ -1,4 +1,4 @@
-﻿// sdtools.common.js v0.8.2
+﻿// sdtools.common.js v1.0
 var websocket = null,
     uuid = null,
     registerEventName = null,
@@ -13,7 +13,7 @@ function connectElgatoStreamDeckSocket(inPort, inUUID, inRegisterEvent, inInfo, 
     console.log(inUUID, inActionInfo);
     actionInfo = JSON.parse(inActionInfo); // cache the info
     inInfo = JSON.parse(inInfo);
-    websocket = new WebSocket('ws://localhost:' + inPort);
+    websocket = new WebSocket('ws://127.0.0.1:' + inPort);
 
     addDynamicStyles(inInfo.colors);
 
@@ -71,8 +71,21 @@ function loadConfiguration(payload) {
                     elemFile.innerText = "No file...";
                 }
             }
-            else if (elem.classList.contains("sdHiddenArray")) { // Hidden field that holds an array
-                elem.value = JSON.stringify(payload[key])
+            else if (elem.classList.contains("sdList")) { // Dynamic dropdown
+                var textProperty = elem.getAttribute("sdListTextProperty");
+                var valueProperty = elem.getAttribute("sdListValueProperty");
+                var valueField = elem.getAttribute("sdValueField");
+
+                var items = payload[key];
+                elem.options.length = 0;
+
+                for (var idx = 0; idx < items.length; idx++) {
+                    var opt = document.createElement('option');
+                    opt.value = items[idx][valueProperty];
+                    opt.text = items[idx][textProperty];
+                    elem.appendChild(opt);
+                }
+                elem.value = payload[valueField];
             }
             else { // Normal value
                 elem.value = payload[key];
@@ -106,8 +119,9 @@ function setSettings() {
                 elemFile.innerText = elem.value;
             }
         }
-        else if (elem.classList.contains("sdHiddenArray")) { // Hidden field that holds an array
-            payload[key] = JSON.parse(elem.value);
+        else if (elem.classList.contains("sdList")) { // Dynamic dropdown
+            var valueField = elem.getAttribute("sdValueField");
+            payload[valueField] = elem.value;
         }
         else { // Normal value
             payload[key] = elem.value;
@@ -130,7 +144,20 @@ function setSettingsToPlugin(payload) {
     }
 }
 
-// our method to pass values to the plugin
+// Sends an entire payload to the sendToPlugin method
+function sendPayloadToPlugin(payload) {
+    if (websocket && (websocket.readyState === 1)) {
+        const json = {
+            'action': actionInfo['action'],
+            'event': 'sendToPlugin',
+            'context': uuid,
+            'payload': payload
+        };
+        websocket.send(JSON.stringify(json));
+    }
+}
+
+// Sends one value to the sendToPlugin method
 function sendValueToPlugin(value, param) {
     if (websocket && (websocket.readyState === 1)) {
         const json = {
