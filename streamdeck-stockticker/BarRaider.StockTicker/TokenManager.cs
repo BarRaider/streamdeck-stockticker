@@ -79,6 +79,7 @@ namespace BarRaider.StockTicker
 
         internal void InitTokens(string stockToken, DateTime tokenCreateDate)
         {
+            Logger.Instance.LogMessage(TracingLevel.INFO, "InitTokens called");
             if (token == null || token.TokenLastRefresh < tokenCreateDate)
             {
                 if (String.IsNullOrWhiteSpace(stockToken))
@@ -88,12 +89,14 @@ namespace BarRaider.StockTicker
                 token = new APIToken() { StockToken = stockToken, TokenLastRefresh = tokenCreateDate };
                 failedToken = false;
                 SaveToken();
+                Logger.Instance.LogMessage(TracingLevel.INFO, $"New token saved: {stockToken}");
             }
             TokensChanged?.Invoke(this, new APITokenEventArgs(TokenExists));
         }
 
         internal void SetTokenFailed()
         {
+            Logger.Instance.LogMessage(TracingLevel.INFO, $"SetTokenFailed Called!");
             failedToken = true;
         }
 

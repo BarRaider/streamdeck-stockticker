@@ -86,7 +86,7 @@ namespace BarRaider.StockTicker
 
         public void SetStockToken(string token)
         {
-            TokenManager.Instance.InitTokens(token, DateTime.Now);
+            TokenManager.Instance.InitTokens(token.Trim(), DateTime.Now);
         }
         
         public async Task<JObject> FetchCurrencyData(string baseCurrency, string symbol)
