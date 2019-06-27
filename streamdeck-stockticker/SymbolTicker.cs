@@ -41,6 +41,9 @@ namespace StockTicker
         private const string UP_ARROW = "↑";
         private const string DOWN_ARROW = "↓";
         private const string HIDDEN_API_TOKEN = "*****";
+        private const string CLOSED_MARKET_STRING = "Close";
+        private const int CLOSED_MARKET_DELAY = 600;
+        private const int FORCE_REFRESH_LENGTH = 2;
 
 
         private PluginSettings settings;
@@ -48,6 +51,9 @@ namespace StockTicker
         private bool showDetails = false;
         private SymbolData stockData;
         private StockComm stockComm = new StockComm();
+        private int closedMarketDelay = 0;
+        private bool keyPressed = false;
+        private DateTime keyPressStart;
 
         #endregion
 
@@ -84,12 +90,16 @@ namespace StockTicker
 
         public async override void KeyPressed(KeyPayload payload)
         {
+            keyPressed = true;
+            keyPressStart = DateTime.Now;
             showDetails = !showDetails;
             await DrawSymbolData(stockData);
+           
         }
 
         public override void KeyReleased(KeyPayload payload)
         {
+            keyPressed = false;
         }
 
         public override async void OnTick()
@@ -106,26 +116,40 @@ namespace StockTicker
                 return;
             }
 
-            if ((DateTime.Now - lastRefresh).TotalSeconds >= settings.RefreshSeconds)
+            if (keyPressed && (DateTime.Now - keyPressStart).TotalSeconds >= FORCE_REFRESH_LENGTH)
+            {
+                lastRefresh = DateTime.MinValue;
+                await Connection.ShowOk();
+            }
+
+            if ((DateTime.Now - lastRefresh).TotalSeconds >= Math.Max(settings.RefreshSeconds, closedMarketDelay)) // Delay added if market is closed to preserve API calls
             {
                 try
                 {
                     lastRefresh = DateTime.Now;
                     stockData = await stockComm.GetSymbol(settings.SymbolName);
-                    if (stockData != null)
-                    {
-                        await DrawSymbolData(stockData);
-                    }
-                    else
-                    {
-                        await Connection.SetImageAsync(System.Configuration.ConfigurationManager.AppSettings["SymbolNotSet"]);
-                    }
                 }
                 catch (Exception ex)
                 {
                     Logger.Instance.LogMessage(TracingLevel.ERROR, $"OnTick Exception: {ex}");
                 }
+            }
 
+            if (stockData != null)
+            {
+                await DrawSymbolData(stockData);
+                if (stockData.Quote.LatestSource == CLOSED_MARKET_STRING) // Add a delay if the market is closed, to preserve API calls;
+                {
+                    closedMarketDelay = CLOSED_MARKET_DELAY;
+                }
+                else
+                {
+                    closedMarketDelay = 0;
+                }
+            }
+            else
+            {
+                await Connection.SetImageAsync(System.Configuration.ConfigurationManager.AppSettings["SymbolNotSet"]);
             }
         }
 

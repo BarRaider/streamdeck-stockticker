@@ -6,6 +6,10 @@ using System;
 using System.Drawing;
 using System.Threading.Tasks;
 
+
+/*
+ !Thanks to FerretBomb!
+ */
 namespace StockTicker
 {
     [PluginActionId("com.barraider.currencyexchange")]
@@ -24,6 +28,7 @@ namespace StockTicker
                 instance.Symbol = "EUR";
                 instance.ForegroundColor = "#ffffff";
                 instance.BackgroundColor = "#000000";
+                instance.Multiplier = "1";
 
                 return instance;
             }
@@ -39,6 +44,9 @@ namespace StockTicker
 
             [JsonProperty(PropertyName = "backgroundColor")]
             public string BackgroundColor { get; set; }
+
+            [JsonProperty(PropertyName = "multiplier")]
+            public string Multiplier { get; set; }
         }
 
         #endregion
@@ -121,7 +129,14 @@ namespace StockTicker
                 graphics.FillRectangle(bgBrush, 0, 0, Tools.KEY_DEFAULT_WIDTH, Tools.KEY_DEFAULT_HEIGHT);
 
                 // Top title
-                string title = $"1 {settings.BaseCurrency}:";
+
+                int multiplier;
+                if (!String.IsNullOrWhiteSpace(settings.Multiplier) && int.TryParse(settings.Multiplier, out multiplier))
+                {
+                    currency *= multiplier;
+                }
+                
+                string title = $"{settings.Multiplier} {settings.BaseCurrency}:";
                 stringSize = graphics.MeasureString(title, fontDefault);
                 stringPos = Math.Abs((Tools.KEY_DEFAULT_WIDTH - stringSize.Width)) / 2;
                 graphics.DrawString(title, fontDefault, fgBrush, new PointF(stringPos, 5));
