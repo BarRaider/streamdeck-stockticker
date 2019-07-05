@@ -6,6 +6,9 @@
 <img src="/_images/currency.jpg">
 <img src="/_images/crypto.jpg">
 
+## New in v1.6
+* Supports modifying the multiplier in the Currency Converter. Useful when the difference between two currencies is very bug (like Japanese Yen and Pound)
+
 ## New in v1.4
 **IMPORTANT:** The provider of the data we use (iexcloud.io) now requires a Free API token. I am working on finding a free solution that does not require an API token. In the mean time, see the ***Getting an API key*** section below for details on how to get a free one from iexcloud.io.
 
