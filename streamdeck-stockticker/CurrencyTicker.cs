@@ -23,12 +23,14 @@ namespace StockTicker
         {
             public static PluginSettings CreateDefaultSettings()
             {
-                PluginSettings instance = new PluginSettings();
-                instance.BaseCurrency = "USD";
-                instance.Symbol = "EUR";
-                instance.ForegroundColor = "#ffffff";
-                instance.BackgroundColor = "#000000";
-                instance.Multiplier = "1";
+                PluginSettings instance = new PluginSettings
+                {
+                    BaseCurrency = "USD",
+                    Symbol = "EUR",
+                    ForegroundColor = "#ffffff",
+                    BackgroundColor = "#000000",
+                    Multiplier = "1"
+                };
 
                 return instance;
             }
@@ -51,9 +53,9 @@ namespace StockTicker
 
         #endregion
 
-        private PluginSettings settings;
+        private readonly PluginSettings settings;
         private DateTime lastRefresh;
-        private StockComm stockComm = new StockComm();
+        private readonly StockComm stockComm = new StockComm();
 
         public CurrencyTicker(SDConnection connection, InitialPayload payload) : base(connection, payload)
         {
@@ -115,8 +117,7 @@ namespace StockTicker
         {
             try
             {
-                Graphics graphics;
-                Bitmap bmp = Tools.GenerateKeyImage(out graphics);
+                Bitmap bmp = Tools.GenerateKeyImage(out Graphics graphics);
 
                 SizeF stringSize;
                 float stringPos;
@@ -130,12 +131,11 @@ namespace StockTicker
 
                 // Top title
 
-                int multiplier;
-                if (!String.IsNullOrWhiteSpace(settings.Multiplier) && int.TryParse(settings.Multiplier, out multiplier))
+                if (!String.IsNullOrWhiteSpace(settings.Multiplier) && int.TryParse(settings.Multiplier, out int multiplier))
                 {
                     currency *= multiplier;
                 }
-                
+
                 string title = $"{settings.Multiplier} {settings.BaseCurrency}:";
                 stringSize = graphics.MeasureString(title, fontDefault);
                 stringPos = Math.Abs((Tools.KEY_DEFAULT_WIDTH - stringSize.Width)) / 2;

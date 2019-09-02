@@ -19,10 +19,12 @@ namespace StockTicker
         {
             public static PluginSettings CreateDefaultSettings()
             {
-                PluginSettings instance = new PluginSettings();
-                instance.SymbolName = String.Empty;
-                instance.RefreshSeconds = 60;
-                instance.ApiToken = String.Empty;
+                PluginSettings instance = new PluginSettings
+                {
+                    SymbolName = String.Empty,
+                    RefreshSeconds = 60,
+                    ApiToken = String.Empty
+                };
 
                 return instance;
             }
@@ -46,11 +48,11 @@ namespace StockTicker
         private const int FORCE_REFRESH_LENGTH = 2;
 
 
-        private PluginSettings settings;
+        private readonly PluginSettings settings;
         private DateTime lastRefresh;
         private bool showDetails = false;
         private SymbolData stockData;
-        private StockComm stockComm = new StockComm();
+        private readonly StockComm stockComm = new StockComm();
         private int closedMarketDelay = 0;
         private bool keyPressed = false;
         private DateTime keyPressStart;
@@ -180,8 +182,7 @@ namespace StockTicker
         {
             try
             {
-                Graphics graphics;
-                Bitmap bmp = Tools.GenerateKeyImage(out graphics);
+                Bitmap bmp = Tools.GenerateKeyImage(out Graphics graphics);
                 SizeF stringSize;
                 float stringPos;
                 string stockArrow = UP_ARROW;
@@ -206,7 +207,7 @@ namespace StockTicker
                         stockArrow = DOWN_ARROW;
                         stockBrush = Brushes.Red;
                     }
-                    string stockStr = $"{data.Quote.LatestPrice}\r\n({(data.Quote.ChangePercent * 100).ToString("0.00")}%)";
+                    string stockStr = $"{data.Quote.LatestPrice}\r\n({(data.Quote.ChangePercent.HasValue ? (data.Quote.ChangePercent.Value * 100).ToString("0.00") : "ERR")}%)";
                     stringSize = graphics.MeasureString(stockStr, fontStock);
                     stringPos = Math.Abs((Tools.KEY_DEFAULT_WIDTH - stringSize.Width)) / 2;
 

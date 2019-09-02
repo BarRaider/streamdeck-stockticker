@@ -51,7 +51,7 @@
   "Name": "Stock & Currency",
   "Icon": "Images/pluginIcon",
   "URL": "https://barraider.github.io/",
-  "Version": "1.6",
+  "Version": "1.6.2",
   "CodePathWin": "com.barraider.stockticker.exe",
   "Category": "BarRaider",
   "CategoryIcon": "Images/categoryIcon",
