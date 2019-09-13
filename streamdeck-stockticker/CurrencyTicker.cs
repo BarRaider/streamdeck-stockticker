@@ -117,17 +117,19 @@ namespace StockTicker
         {
             try
             {
-                Bitmap bmp = Tools.GenerateKeyImage(out Graphics graphics);
+                Bitmap bmp = Tools.GenerateGenericKeyImage(out Graphics graphics);
+                int height = bmp.Height;
+                int width = bmp.Width;
 
                 SizeF stringSize;
                 float stringPos;
-                var fontDefault = new Font("Verdana", 10, FontStyle.Bold);
-                var fontCurrency = new Font("Verdana", 12, FontStyle.Bold);
+                var fontDefault = new Font("Verdana", 20, FontStyle.Bold);
+                var fontCurrency = new Font("Verdana", 24, FontStyle.Bold);
 
                 // Background
                 var bgBrush = new SolidBrush(ColorTranslator.FromHtml(settings.BackgroundColor));
                 var fgBrush = new SolidBrush(ColorTranslator.FromHtml(settings.ForegroundColor));
-                graphics.FillRectangle(bgBrush, 0, 0, Tools.KEY_DEFAULT_WIDTH, Tools.KEY_DEFAULT_HEIGHT);
+                graphics.FillRectangle(bgBrush, 0, 0, width, height);
 
                 // Top title
 
@@ -138,17 +140,18 @@ namespace StockTicker
 
                 string title = $"{settings.Multiplier} {settings.BaseCurrency}:";
                 stringSize = graphics.MeasureString(title, fontDefault);
-                stringPos = Math.Abs((Tools.KEY_DEFAULT_WIDTH - stringSize.Width)) / 2;
+                stringPos = Math.Abs((width - stringSize.Width)) / 2;
                 graphics.DrawString(title, fontDefault, fgBrush, new PointF(stringPos, 5));
 
                 stringSize = graphics.MeasureString(currency.ToString("0.00"), fontCurrency);
-                stringPos = Math.Abs((Tools.KEY_DEFAULT_WIDTH - stringSize.Width)) / 2;
-                graphics.DrawString(currency.ToString("0.00"), fontCurrency, fgBrush, new PointF(stringPos, 25));
+                stringPos = Math.Abs((width - stringSize.Width)) / 2;
+                graphics.DrawString(currency.ToString("0.00"), fontCurrency, fgBrush, new PointF(stringPos, 50));
 
                 stringSize = graphics.MeasureString(settings.Symbol, fontCurrency);
-                stringPos = Math.Abs((Tools.KEY_DEFAULT_WIDTH - stringSize.Width)) / 2;
-                graphics.DrawString(settings.Symbol, fontCurrency, fgBrush, new PointF(stringPos, 50));
+                stringPos = Math.Abs((width - stringSize.Width)) / 2;
+                graphics.DrawString(settings.Symbol, fontCurrency, fgBrush, new PointF(stringPos, 100));
                 await Connection.SetImageAsync(bmp);
+                graphics.Dispose();
             }
             catch (Exception ex)
             {

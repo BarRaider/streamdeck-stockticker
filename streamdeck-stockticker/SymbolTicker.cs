@@ -182,14 +182,16 @@ namespace StockTicker
         {
             try
             {
-                Bitmap bmp = Tools.GenerateKeyImage(out Graphics graphics);
+                Bitmap bmp = Tools.GenerateGenericKeyImage(out Graphics graphics);
+                int height = bmp.Height;
+                int width = bmp.Width;
                 SizeF stringSize;
                 float stringPos;
                 string stockArrow = UP_ARROW;
                 Brush stockBrush = Brushes.Green;
-                var fontDefault = new Font("Verdana", 10, FontStyle.Bold);
-                var fontStock = new Font("Verdana", 8, FontStyle.Bold);
-                var fontDetails = new Font("Verdana", 7, FontStyle.Regular);
+                Font fontDefault = new Font("Verdana", 20, FontStyle.Bold);
+                Font fontStock = new Font("Verdana", 16, FontStyle.Bold);
+                Font fontDetails = new Font("Verdana", 14, FontStyle.Regular);
 
                 if (showDetails) // Show market details
                 {
@@ -199,8 +201,8 @@ namespace StockTicker
                 else
                 {
                     stringSize = graphics.MeasureString(data.SymbolName, fontDefault);
-                    stringPos = Math.Abs((Tools.KEY_DEFAULT_WIDTH - stringSize.Width)) / 2;
-                    graphics.DrawString(data.SymbolName, fontDefault, Brushes.White, new PointF(stringPos, 5));
+                    stringPos = Math.Abs((width - stringSize.Width)) / 2;
+                    graphics.DrawString(data.SymbolName, fontDefault, Brushes.White, new PointF(stringPos, 10));
 
                     if (data.Quote.Change < 0)
                     {
@@ -209,13 +211,18 @@ namespace StockTicker
                     }
                     string stockStr = $"{data.Quote.LatestPrice}\r\n({(data.Quote.ChangePercent.HasValue ? (data.Quote.ChangePercent.Value * 100).ToString("0.00") : "ERR")}%)";
                     stringSize = graphics.MeasureString(stockStr, fontStock);
-                    stringPos = Math.Abs((Tools.KEY_DEFAULT_WIDTH - stringSize.Width)) / 2;
+                    stringPos = Math.Abs((width - stringSize.Width)) / 2;
 
-                    graphics.DrawString(stockStr, fontStock, stockBrush, new PointF(stringPos, 25));
-                    graphics.DrawString(stockArrow, fontStock, stockBrush, new PointF(Tools.KEY_DEFAULT_WIDTH / 2 - 5, 25 + stringSize.Height));
+                    graphics.DrawString(stockStr, fontStock, stockBrush, new PointF(stringPos, 50));
+                    graphics.DrawString(stockArrow, fontStock, stockBrush, new PointF(width / 2 - 5, 50 + stringSize.Height));
                 }
                 string imgBase64 = Tools.ImageToBase64(bmp, true);
                 await Connection.SetImageAsync(imgBase64);
+                graphics.Dispose();
+                fontDefault.Dispose();
+                fontStock.Dispose();
+                fontDetails.Dispose();
+
             }
             catch (Exception ex)
             {
