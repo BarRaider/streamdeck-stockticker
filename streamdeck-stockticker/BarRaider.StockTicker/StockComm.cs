@@ -34,12 +34,14 @@ namespace BarRaider.StockTicker
                 return null;
             }
 
-            var kvp = new List<KeyValuePair<string, string>>();
-            kvp.Add(new KeyValuePair<string, string>("token", TokenManager.Instance.Token.StockToken));
-            kvp.Add(new KeyValuePair<string, string>("symbols", stockSymbol));
-            kvp.Add(new KeyValuePair<string, string>("types", "quote")); // Remove chart as of now
-            //kvp.Add(new KeyValuePair<string, string>("types", "quote,chart"));
-            kvp.Add(new KeyValuePair<string, string>("range", "dynamic"));
+            var kvp = new List<KeyValuePair<string, string>>
+            {
+                new KeyValuePair<string, string>("token", TokenManager.Instance.Token.StockToken),
+                new KeyValuePair<string, string>("symbols", stockSymbol),
+                new KeyValuePair<string, string>("types", "quote"), // Remove chart as of now
+                                                                    //kvp.Add(new KeyValuePair<string, string>("types", "quote,chart"));
+                new KeyValuePair<string, string>("range", "dynamic")
+            };
             //kvp.Add(new KeyValuePair<string, string>("chartLast", DEFAULT_CHART_POINTS.ToString()));
             HttpResponseMessage response = await StockQuery(STOCK_BATCH_CHART_QUOTE, kvp);
 
@@ -93,19 +95,21 @@ namespace BarRaider.StockTicker
         {
             try
             {
-                var client = new HttpClient();
-                string url = String.Format(CURRENCY_FETCH_URI, baseCurrency, symbol);
-                var response = await client.GetAsync(url);
-
-                if (!response.IsSuccessStatusCode)
+                using (HttpClient client = new HttpClient())
                 {
-                    Logger.Instance.LogMessage(TracingLevel.WARN, $"Could not fetch data for Base: {baseCurrency} and Symbol: {symbol}");
-                    return null;
-                }
+                    string url = String.Format(CURRENCY_FETCH_URI, baseCurrency, symbol);
+                    var response = await client.GetAsync(url);
 
-                string body = await response.Content.ReadAsStringAsync();
-                JObject obj = JObject.Parse(body);
-                return obj;
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        Logger.Instance.LogMessage(TracingLevel.WARN, $"Could not fetch data for Base: {baseCurrency} and Symbol: {symbol}");
+                        return null;
+                    }
+
+                    string body = await response.Content.ReadAsStringAsync();
+                    JObject obj = JObject.Parse(body);
+                    return obj;
+                }
             }
             catch (Exception ex)
             {
@@ -127,19 +131,21 @@ namespace BarRaider.StockTicker
         private async Task<HttpResponseMessage> StockQuery(string uriPath, List<KeyValuePair<string, string>> optionalContent)
         {
             string queryParams = string.Empty;
-            var client = new HttpClient();
-            //client.Timeout = new TimeSpan(0, 0, 10);
-
-            if (optionalContent != null)
+            using (HttpClient client = new HttpClient())
             {
-                List<string> paramList = new List<string>();
-                foreach (var kvp in optionalContent)
+                //client.Timeout = new TimeSpan(0, 0, 10);
+
+                if (optionalContent != null)
                 {
-                    paramList.Add($"{kvp.Key}={kvp.Value}");
+                    List<string> paramList = new List<string>();
+                    foreach (var kvp in optionalContent)
+                    {
+                        paramList.Add($"{kvp.Key}={kvp.Value}");
+                    }
+                    queryParams = "?" + string.Join("&", paramList);
                 }
-                queryParams = "?" + string.Join("&", paramList);
+                return await client.GetAsync($"{STOCK_URI_PREFIX}{uriPath}{queryParams}");
             }
-            return await client.GetAsync($"{STOCK_URI_PREFIX}{uriPath}{queryParams}");
         }
     }
 }
