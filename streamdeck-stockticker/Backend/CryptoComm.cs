@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using System.Linq;
 using System.Threading;
 
-namespace BarRaider.StockTicker
+namespace StockTicker.Backend
 {
     public class CryptoComm
     {
@@ -26,8 +26,8 @@ namespace BarRaider.StockTicker
         private static readonly object objLock = new object();
         private List<CryptoSymbolData> latestSymbols = null;
         private List<CryptoSymbolGeneralInfo> symbolsGeneralInfo = null;
-        private SemaphoreSlim refreshLock = new SemaphoreSlim(1,1);
-        private System.Timers.Timer tmrRefreshSymbols = new System.Timers.Timer();
+        private readonly SemaphoreSlim refreshLock = new SemaphoreSlim(1,1);
+        private readonly System.Timers.Timer tmrRefreshSymbols = new System.Timers.Timer();
         private DateTime lastRefresh;
         #endregion
 
@@ -70,11 +70,11 @@ namespace BarRaider.StockTicker
 
         #region Public Methods
 
-        public List<CryptoSymbolGeneralInfo> GetAllSymbols()
+        public async Task<List<CryptoSymbolGeneralInfo>> GetAllSymbols()
         {
             if (symbolsGeneralInfo == null)
             {
-                LoadCurrenciesGeneralInfo();
+                await LoadCurrenciesGeneralInfo();
             }
             return symbolsGeneralInfo;
         }
@@ -101,7 +101,7 @@ namespace BarRaider.StockTicker
 
         #endregion
 
-        private async void LoadCurrenciesGeneralInfo()
+        private async Task LoadCurrenciesGeneralInfo()
         {
             try
             {

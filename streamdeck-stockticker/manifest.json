@@ -44,16 +44,31 @@
       "Tooltip": "View live cryptocurrencies",
       "UUID": "com.barraider.cryptoticker",
       "PropertyInspectorPath": "PropertyInspector/Stockticker/Crypto.html"
+    },
+    {
+      "Icon": "Images/tarkovIcon",
+      "Name": "Tarkov Ticker",
+      "States": [
+        {
+          "Image": "Images/tarkovAction",
+          "TitleAlignment": "bottom",
+          "FontSize": "14"
+        }
+      ],
+      "SupportedInMultiActions": false,
+      "Tooltip": "See price of 0.2 BTC in RUB",
+      "UUID": "com.barraider.tarkovticker",
+      "PropertyInspectorPath": "PropertyInspector/Stockticker/Tarkov.html"
     }
   ],
   "Author": "BarRaider",
-  "Description": "View live quotes of your favorite stocks, directly on the Stream Deck\r\nNew: Now supports Currencies and CryptoCurrencies",
+  "Description": "View live quotes of your favorite stocks, directly on the Stream Deck. Supports Currencies and CryptoCurrencies\nNEW: Save space by having multiple stocks rotated on one key",
   "Name": "Stock & Currency",
   "Icon": "Images/pluginIcon",
   "URL": "https://BarRaider.com/",
-  "Version": "1.6.5",
+  "Version": "1.7",
   "CodePathWin": "com.barraider.stockticker.exe",
-  "Category": "BarRaider",
+  "Category": "Stock Ticker [BarRaider]",
   "CategoryIcon": "Images/categoryIcon",
   "OS": [
     {
@@ -63,6 +78,6 @@
   ],
   "SDKVersion": 2,
   "Software": {
-    "MinimumVersion": "4.3"
+    "MinimumVersion": "4.8"
   }
 }

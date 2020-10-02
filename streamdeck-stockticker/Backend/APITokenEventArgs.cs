@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace BarRaider.StockTicker
+namespace StockTicker.Backend
 {
     internal class APITokenEventArgs : EventArgs
     {

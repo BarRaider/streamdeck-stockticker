@@ -5,7 +5,7 @@ using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 
-namespace BarRaider.StockTicker
+namespace StockTicker.Backend
 {
     internal class TokenManager
     {
@@ -16,7 +16,6 @@ namespace BarRaider.StockTicker
         private static readonly object objLock = new object();
 
         private APIToken token;
-        private object refreshTokensLock = new object();
         private bool failedToken = false;
 
         #endregion

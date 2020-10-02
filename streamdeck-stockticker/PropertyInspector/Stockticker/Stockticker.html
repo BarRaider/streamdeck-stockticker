@@ -6,8 +6,10 @@
     <meta name=apple-mobile-web-app-capable content=yes>
     <meta name=apple-mobile-web-app-status-bar-style content=black>
     <title>BarRaider's Stockticker plugin</title>
-    <link rel="stylesheet" href="../sdpi.css">
-    <script src="../sdtools.common.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/barraider/streamdeck-easypi@latest/src/sdpi.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/barraider/streamdeck-easypi@latest/src/rangeTooltip.css">
+    <script src="https://cdn.jsdelivr.net/gh/barraider/streamdeck-easypi@latest/src/sdtools.common.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/barraider/streamdeck-easypi@latest/src/rangeTooltip.js"></script>
     <script src="../Stockticker.js"></script>
 </head>
 <body>
@@ -15,19 +17,62 @@
         <details class="message">
             <summary>For feedback/suggestions contact me at <span class="linkspan" onclick="openWebsite()">https://BarRaider.com</span> </summary>
         </details>
-        <details class="message">
-            <summary>NOTE: An API key is now required (click here for more instructions)</summary>
-            <p>The provider of the data we use (iexcloud.io) now requires a Free API token. I am working on finding a free solution that does not require an API token. In the mean time, <span class="linkspan" onclick="openStockWebsite()">Click here</span> for details on how to get a free one from iexcloud.io. </p>
-        </details>
         <div class="sdpi-item">
-            <div class="sdpi-item-label">iexcloud.io API key</div>
-            <input class="sdpi-item-value sdProperty" placeholder="pk_abcdef01234567890" value="" id="apiToken" oninput="setSettings()">
+            <div class="sdpi-item-label">Stocks Provider</div>
+            <select class="sdpi-item-value select sdProperty" id="stockProvider" oninput="setSettings()">
+                <option value="0">Yahoo Finance</option>
+                <option value="1">iexcloud.io</option>
+            </select>
         </div>
-        <div class="sdpi-item">
-            <div class="sdpi-item-label">Stock Symbol</div>
-            <input class="sdpi-item-value sdProperty" placeholder="i.e AMZN/FB/GOOG" value="" id="symbolName" oninput="setSettings()">
+        <div id="dvExcloudSettings" style="display:none">
+            <details class="message">
+                <summary>NOTE: An API key is now required (click here for more instructions)</summary>
+                <p>The provider of the data we use (iexcloud.io) now requires a Free API token. I am working on finding a free solution that does not require an API token. In the mean time, <span class="linkspan" onclick="openStockWebsite()">Click here</span> for details on how to get a free one from iexcloud.io. </p>
+            </details>
+            <div class="sdpi-item">
+                <div class="sdpi-item-label">iexcloud.io API key</div>
+                <input class="sdpi-item-value sdProperty" placeholder="pk_abcdef01234567890" value="" id="apiToken" oninput="setSettings()">
+            </div>
+        </div>
+        <hr />
+        <div type="radio" class="sdpi-item" id="dvShowTimeElapsed">
+            <div class="sdpi-item-label">Mode</div>
+            <div class="sdpi-item-value ">
+                <div class="sdpi-item-child">
+                    <input id="modeSingle" class="sdProperty sdCheckbox" type="radio" name="stockMode" checked oninput="setSettings()">
+                    <label for="modeSingle" class="sdpi-item-label"><span></span>Single Stock</label>
+                </div>
+                <div class="sdpi-item-child">
+                    <input id="modeMultiple" class="sdProperty sdCheckbox" type="radio" name="stockMode" checked oninput="setSettings()">
+                    <label for="modeMultiple" class="sdpi-item-label"><span></span>Multiple Stocks</label>
+                </div>
+            </div>
         </div>
 
+        <div id="dvSingleModeSettings" style="display:none">
+            <div class="sdpi-item">
+                <div class="sdpi-item-label">Stock Symbol</div>
+                <input class="sdpi-item-value sdProperty" placeholder="i.e AMZN/FB/GOOG" value="" id="symbolName" oninput="setSettings()">
+            </div>
+        </div>
+        <div id="dvMultipleModeSettings" style="display:none">
+            <div type="textarea" class="sdpi-item" id="dvMultiStocks">
+                <div class="sdpi-item-label">Stock Symbols</div>
+                <span class="sdpi-item-value textarea">
+                    <textarea type="textarea" oninput="setSettings()" class="sdProperty" id="symbols" placeholder="One symbol per line"></textarea>
+                </span>
+            </div>
+            <div type="range" class="sdpi-item sdShowTooltip" id="dvRotationSpeed">
+                <div class="sdpi-item-label">Rotation Speed (sec)</div>
+                <div class="sdpi-item-value">
+                    <span class="clickable" value="1">1</span>
+                    <input type="range" min="1" max="120" data-suffix=" seconds" value="5" class="sdProperty" oninput="setSettings()" id="rotationSpeed">
+                    <span class="clickable" value="120">120</span>
+                    <label for="delay" class="rangeLabel"></label>
+                </div>
+            </div>
+        </div>
+        <hr />
         <div class="sdpi-item">
             <div class="sdpi-item-label">Refresh Rate</div>
             <select class="sdpi-item-value select sdProperty" id="refreshSeconds" oninput="setSettings()">
@@ -42,6 +87,20 @@
                 <option value="3600">1 Hour</option>
             </select>
         </div>
+
+        <div type="color" class="sdpi-item" id="dvBackground">
+            <div class="sdpi-item-label">Background</div>
+            <input type="color" class="sdpi-item-value sdProperty" value="#ffffff" id="backgroundColor" oninput="setSettings()">
+        </div>
+        <div class="sdpi-item" id="dvBackgroundImage">
+            <div class="sdpi-item-label">Background Image</div>
+            <div class="sdpi-item-group file" id="filepickergroup">
+                <input class="sdpi-item-value sdProperty sdFile" type="file" id="backgroundImage" accept=".jpg, .jpeg, .png, .ico, .gif, .bmp, .tiff" oninput="setSettings()">
+                <label class="sdpi-file-info " for="backgroundImage" id="backgroundImageFilename">No file...</label>
+                <label class="sdpi-file-label" for="backgroundImage">Choose file...</label>
+            </div>
+        </div>
+        <div class="sdpi-info-label hidden" style="top: -1000;" value="">Tooltip</div>
     </div>
 </body>
 </html>

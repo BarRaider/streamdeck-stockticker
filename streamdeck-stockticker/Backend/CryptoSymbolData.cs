@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace BarRaider.StockTicker
+namespace StockTicker.Backend
 {
     public class CryptoSymbolData
     {

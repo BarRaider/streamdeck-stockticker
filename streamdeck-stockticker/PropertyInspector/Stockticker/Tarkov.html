@@ -5,7 +5,7 @@
     <meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no,minimal-ui,viewport-fit=cover">
     <meta name=apple-mobile-web-app-capable content=yes>
     <meta name=apple-mobile-web-app-status-bar-style content=black>
-    <title>BarRaider's CryptoCurrency Ticker</title>
+    <title>BarRaider's Tarkov Ticker</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/barraider/streamdeck-easypi@latest/src/sdpi.css">
     <script src="https://cdn.jsdelivr.net/gh/barraider/streamdeck-easypi@latest/src/sdtools.common.js"></script>
 </head>
@@ -14,16 +14,6 @@
         <details class="message">
             <summary>For feedback/suggestions contact me at <span class="linkspan" onclick="openWebsite()">https://BarRaider.com</span> </summary>
         </details>
-        <div class="sdpi-item">
-            <div class="sdpi-item-label">Base Currency</div>
-            <select class="sdpi-item-value select sdProperty sdList" id="currencies" oninput="setSettings()" sdListTextProperty="name" sdListValueProperty="name" sdValueField="currenciesSelected"></select>
-        </div>
-
-        <div class="sdpi-item">
-            <div class="sdpi-item-label">Quote</div>
-            <select class="sdpi-item-value select sdProperty sdList" id="quotes" oninput="setSettings()" sdListTextProperty="name" sdListValueProperty="name" sdValueField="quotesSelected"></select>
-        </div>
-
         <div type="color" class="sdpi-item" id="dvForground">
             <div class="sdpi-item-label">Foreground</div>
             <input type="color" class="sdpi-item-value sdProperty" value="#000000" id="foregroundColor" oninput="setSettings()">

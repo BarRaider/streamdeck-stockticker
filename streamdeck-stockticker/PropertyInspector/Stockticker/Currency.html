@@ -6,7 +6,8 @@
     <meta name=apple-mobile-web-app-capable content=yes>
     <meta name=apple-mobile-web-app-status-bar-style content=black>
     <title>BarRaider's Currency Ticker</title>
-    <link rel="stylesheet" href="../sdpi.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/barraider/streamdeck-easypi@latest/src/sdpi.css">
+    <script src="https://cdn.jsdelivr.net/gh/barraider/streamdeck-easypi@latest/src/sdtools.common.js"></script>
 </head>
 <body>
     <div class="sdpi-wrapper">
@@ -105,7 +106,14 @@
             <div class="sdpi-item-label">Background</div>
             <input type="color" class="sdpi-item-value sdProperty" value="#ffffff" id="backgroundColor" oninput="setSettings()">
         </div>
+        <div class="sdpi-item" id="dvBackgroundImage">
+            <div class="sdpi-item-label">Background Image</div>
+            <div class="sdpi-item-group file" id="filepickergroup">
+                <input class="sdpi-item-value sdProperty sdFile" type="file" id="backgroundImage" accept=".jpg, .jpeg, .png, .ico, .gif, .bmp, .tiff" oninput="setSettings()">
+                <label class="sdpi-file-info " for="backgroundImage" id="backgroundImageFilename">No file...</label>
+                <label class="sdpi-file-label" for="backgroundImage">Choose file...</label>
+            </div>
+        </div>
     </div>
-    <script src="../sdtools.common.js"></script>
 </body>
 </html>

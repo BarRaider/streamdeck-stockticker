@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BarRaider.StockTicker
+namespace StockTicker.Backend
 {
     public class MinuteChart : ChartBase
     {
@@ -23,7 +23,7 @@ namespace BarRaider.StockTicker
         {
             get
             {
-                return Convert.ToDateTime($"{DateOnly.ToString("yyyy-MM-dd")} {TimeOnly.ToString("HH:mm")}");
+                return Convert.ToDateTime($"{DateOnly:yyyy-MM-dd} {TimeOnly:HH:mm}");
             }
 
             set

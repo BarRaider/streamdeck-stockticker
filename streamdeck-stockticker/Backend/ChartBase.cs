@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BarRaider.StockTicker
+namespace StockTicker.Backend
 {
     public abstract class ChartBase
     {

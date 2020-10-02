@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BarRaider.StockTicker
+namespace StockTicker.Backend
 {
     class CustomDateConverter : IsoDateTimeConverter
     {

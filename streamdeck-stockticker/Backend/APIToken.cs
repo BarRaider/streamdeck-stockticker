@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 
-namespace BarRaider.StockTicker
+namespace StockTicker.Backend
 {
     [Serializable]
     internal class APIToken

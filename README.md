@@ -6,13 +6,14 @@
 <img src="/_images/currency.jpg">
 <img src="/_images/crypto.jpg">
 
-## New in v1.6
-* Supports modifying the multiplier in the Currency Converter. Useful when the difference between two currencies is very bug (like Japanese Yen and Pound)
+## New in v1.7
+- `Stock Ticker` now also supports `Yahoo Finance`, removing the need for an API Token!
+- :new: `Tarkov Ticker` shows you the live value of 0.2 BTC in RUB, matching the *Physical bitcoin* in `Escape From Tarkov`
+- :new: `Stock Ticker` supports multiple stocks on the same key! Save space on your Stream Deck by having the same key rotate through multiple stocks!
+- Support for customizable Background/Foreground colors + support for customizable background image
+- Updated look and feel. Font size now auto-adjusts to ensure the values are shown fully on key
 
-## New in v1.4
-**IMPORTANT:** The provider of the data we use (iexcloud.io) now requires a Free API token. I am working on finding a free solution that does not require an API token. In the mean time, see the ***Getting an API key*** section below for details on how to get a free one from iexcloud.io.
-
-## Getting an API key
+## Getting an API key from iexcloud.io
 1. Register a free account at https://iexcloud.io/cloud-login#/register  
 2. Choose the "Start" free-tier option:  
 <img src="/_images/setup1.png">
