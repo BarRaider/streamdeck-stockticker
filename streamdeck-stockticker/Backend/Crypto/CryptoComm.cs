@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using System.Linq;
 using System.Threading;
 
-namespace StockTicker.Backend
+namespace StockTicker.Backend.Crypto
 {
     public class CryptoComm
     {
@@ -22,6 +22,7 @@ namespace StockTicker.Backend
         #endregion
 
         #region Private Members
+        
         private static CryptoComm instance = null;
         private static readonly object objLock = new object();
         private List<CryptoSymbolData> latestSymbols = null;
@@ -29,6 +30,7 @@ namespace StockTicker.Backend
         private readonly SemaphoreSlim refreshLock = new SemaphoreSlim(1,1);
         private readonly System.Timers.Timer tmrRefreshSymbols = new System.Timers.Timer();
         private DateTime lastRefresh;
+        
         #endregion
 
         #region Constructors

@@ -1,5 +1,4 @@
 ﻿using BarRaider.SdTools;
-using StockTicker.Backend;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -9,8 +8,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using StockTicker.BarRaider.StockTicker;
 using System.Diagnostics.SymbolStore;
+using StockTicker.Backend.Stocks;
 
 namespace StockTicker.Actions
 {

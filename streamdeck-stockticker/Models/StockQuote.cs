@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 
-namespace StockTicker.Backend
+namespace StockTicker.Backend.Models
 {
     public class StockQuote
     {

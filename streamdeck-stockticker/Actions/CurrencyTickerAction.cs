@@ -1,8 +1,8 @@
 ﻿using BarRaider.SdTools;
-using StockTicker.Backend;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using StockTicker.BarRaider.StockTicker;
+using StockTicker.Backend;
+using StockTicker.Backend.Currency;
 using System;
 using System.Drawing;
 using System.IO;
@@ -15,8 +15,6 @@ namespace StockTicker.Actions
     public class CurrencyTickerAction
         : PluginBase
     {
-        private const int DEFAULT_REFRESH_TIME = 120000;
-
         #region Settings
 
         private class PluginSettings
@@ -25,22 +23,23 @@ namespace StockTicker.Actions
             {
                 PluginSettings instance = new PluginSettings
                 {
-                    BaseCurrency = "USD",
-                    Symbol = "EUR",
+                    BaseCurrency = CurrencyType.USD,
+                    Symbol = CurrencyType.EUR,
                     ForegroundColor = "#ffffff",
                     BackgroundColor = "#000000",
                     Multiplier = "1",
-                    BackgroundImage = null
+                    BackgroundImage = null,
+                    ApiToken = String.Empty,
                 };
 
                 return instance;
             }
 
             [JsonProperty(PropertyName = "baseCurrency")]
-            public string BaseCurrency { get; set; }
+            public CurrencyType BaseCurrency { get; set; }
 
             [JsonProperty(PropertyName = "symbol")]
-            public string Symbol { get; set; }
+            public CurrencyType Symbol { get; set; }
 
             [JsonProperty(PropertyName = "foregroundColor")]
             public string ForegroundColor { get; set; }
@@ -54,14 +53,16 @@ namespace StockTicker.Actions
             [FilenameProperty]
             [JsonProperty(PropertyName = "backgroundImage")]
             public string BackgroundImage { get; set; }
+
+            [JsonProperty(PropertyName = "apiToken")]
+            public string ApiToken { get; set; }
         }
 
         #endregion
-        
+
         private readonly object backgroundImageLock = new object();
 
         private readonly PluginSettings settings;
-        private DateTime lastRefresh;
         private Image backgroundImage;
 
         public CurrencyTickerAction(SDConnection connection, InitialPayload payload) : base(connection, payload)
@@ -70,10 +71,12 @@ namespace StockTicker.Actions
             if (payload.Settings == null || payload.Settings.Count == 0) // Called the first time you drop a new action into the Stream Deck
             {
                 this.settings = PluginSettings.CreateDefaultSettings();
+                LoadAPIToken();
                 SaveSettings();
             }
             else
             {
+                HandleBackwardsCompatibility(payload.Settings);
                 this.settings = payload.Settings.ToObject<PluginSettings>();
             }
             InitializeSettings();
@@ -94,23 +97,16 @@ namespace StockTicker.Actions
 
         public async override void OnTick()
         {
+            if (!CurrencyManager.Instance.TokenExists())
+            {
+                return;
+            }
             try
             {
-                if ((DateTime.Now - lastRefresh).TotalSeconds >= DEFAULT_REFRESH_TIME)
+                float? value = await CurrencyManager.Instance.FetchCurrencyData(settings.BaseCurrency, settings.Symbol);
+                if (value.HasValue)
                 {
-                    lastRefresh = DateTime.Now;
-                    JObject obj = await CurrencyManager.Instance.FetchCurrencyData(settings.BaseCurrency, settings.Symbol, DEFAULT_REFRESH_TIME);
-                    if (obj != null)
-                    {
-                        var token = obj["rates"];
-
-                        if (token != null)
-                        {
-                            var value = token[settings.Symbol];
-
-                            await DrawCurrencyData(Convert.ToDouble(value.ToString()));
-                        }
-                    }
+                    await DrawCurrencyData(Convert.ToDouble(value.Value));
                 }
             }
             catch (Exception ex)
@@ -121,8 +117,13 @@ namespace StockTicker.Actions
 
         public override void ReceivedSettings(ReceivedSettingsPayload payload)
         {
+            string apiToken = settings.ApiToken;
             Tools.AutoPopulateSettings(settings, payload.Settings);
             InitializeSettings();
+            if (apiToken != settings.ApiToken)
+            {
+                CurrencyManager.Instance.SetCurrencyToken(settings.ApiToken);
+            }
             SaveSettings();
         }
 
@@ -179,8 +180,8 @@ namespace StockTicker.Actions
                     stringWidth = graphics.GetTextCenter(currStr, width, fontCurrency);
                     stringHeight = graphics.DrawAndMeasureString(currStr, fontCurrency, fgBrush, new PointF(stringWidth, stringHeight));
 
-                    stringWidth = graphics.GetTextCenter(settings.Symbol, width, fontDefault);
-                    graphics.DrawAndMeasureString(settings.Symbol, fontDefault, fgBrush, new PointF(stringWidth, 100));
+                    stringWidth = graphics.GetTextCenter(settings.Symbol.ToString(), width, fontDefault);
+                    graphics.DrawAndMeasureString(settings.Symbol.ToString(), fontDefault, fgBrush, new PointF(stringWidth, 100));
                     await Connection.SetImageAsync(bmp);
                     graphics.Dispose();
                     fontDefault.Dispose();
@@ -195,7 +196,6 @@ namespace StockTicker.Actions
 
         private void InitializeSettings()
         {
-            lastRefresh = DateTime.MinValue;
             PrefetchBackgroundImage();
         }
 
@@ -226,5 +226,28 @@ namespace StockTicker.Actions
         {
             Connection.SetSettingsAsync(JObject.FromObject(settings));
         }
+
+        private void LoadAPIToken()
+        {
+            if (TokenManager.Instance.CurrencyTokenExists)
+            {
+                settings.ApiToken = TokenManager.Instance.Token?.CurrencyToken;
+                SaveSettings();
+            }
+        }
+
+        private void HandleBackwardsCompatibility(JObject settings)
+        {
+            if (!Int32.TryParse(settings["baseCurrency"].ToString(), out _))
+            {
+                settings["baseCurrency"] = (int)CurrencyType.USD;
+            }
+
+            if (!Int32.TryParse(settings["symbol"].ToString(), out _))
+            {
+                settings["symbol"] = (int)CurrencyType.EUR;
+            }
+        }
     }
+
 }

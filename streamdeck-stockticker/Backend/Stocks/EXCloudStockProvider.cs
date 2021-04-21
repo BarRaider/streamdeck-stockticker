@@ -1,27 +1,24 @@
 ﻿using BarRaider.SdTools;
 using Newtonsoft.Json.Linq;
-using StockTicker.Wrappers;
+using StockTicker.Backend.Models;
+using StockTicker.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace StockTicker.Backend
+namespace StockTicker.Backend.Stocks
 {
-
-    public class YahooStockProvider : IStockInfoProvider
+    internal class EXCloudStockProvider : IStockInfoProvider
     {
+        //private const string STOCK_URI_PREFIX = "https://api.iextrading.com/1.0/stock/";
+        private const string STOCK_URI_PREFIX = "https://cloud.iexapis.com/stable/stock/";
+        private const string STOCK_BATCH_CHART_QUOTE = "market/batch";
 
-        //---------------------------------------------------
-        //          BarRaider's Hall Of Fame
-        // Subscriber: SaintG85
-        //---------------------------------------------------
         #region Private Members
 
-        private const string STOCK_URI = @"https://query1.finance.yahoo.com/v7/finance/quote?lang=en-US&region=US&corsDomain=finance.yahoo.com&fields=symbol,marketState,regularMarketPrice,regularMarketChange,regularMarketChangePercent,regularMarketDayHigh,regularMarketDayLow&symbols={0}";
-
-        private static YahooStockProvider instance = null;
+        private static EXCloudStockProvider instance = null;
         private static readonly object objLock = new object();
         private static readonly Dictionary<string, SymbolCache> dictSymbolCache = new Dictionary<string, SymbolCache>();
 
@@ -29,7 +26,7 @@ namespace StockTicker.Backend
 
         #region Constructors
 
-        public static YahooStockProvider Instance
+        public static EXCloudStockProvider Instance
         {
             get
             {
@@ -42,32 +39,35 @@ namespace StockTicker.Backend
                 {
                     if (instance == null)
                     {
-                        instance = new YahooStockProvider();
+                        instance = new EXCloudStockProvider();
                     }
                     return instance;
                 }
             }
         }
 
-        private YahooStockProvider()
+        private EXCloudStockProvider()
         {
         }
 
+        #endregion
+
         public bool TokenExists()
         {
-            return true;
+            return TokenManager.Instance.StockTokenExists;
         }
 
         public async Task<SymbolData> GetSymbol(string stockSymbol, int cooldownTimeMs)
         {
             if (!TokenExists())
             {
-                Logger.Instance.LogMessage(TracingLevel.WARN, $"{this.GetType()} GetSymbol was called without a valid token");
+                Logger.Instance.LogMessage(TracingLevel.WARN, $"{this.GetType()} GetSymbol was called without a valid API token");
                 return null;
             }
 
             try
             {
+
                 // Fetch precached version if relevant
                 if (dictSymbolCache.ContainsKey(stockSymbol))
                 {
@@ -78,8 +78,15 @@ namespace StockTicker.Backend
                     }
                 }
 
-                string queryUrl = String.Format(STOCK_URI, stockSymbol);
-                HttpResponseMessage response = await StockQuery(queryUrl, null);
+                var kvp = new List<KeyValuePair<string, string>>
+                {
+                    new KeyValuePair<string, string>("token", TokenManager.Instance.Token.StockToken),
+                    new KeyValuePair<string, string>("symbols", stockSymbol),
+                    new KeyValuePair<string, string>("types", "quote"),
+                    new KeyValuePair<string, string>("range", "dynamic")
+                };
+                //kvp.Add(new KeyValuePair<string, string>("chartLast", DEFAULT_CHART_POINTS.ToString()));
+                HttpResponseMessage response = await StockQuery(STOCK_BATCH_CHART_QUOTE, kvp);
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -93,27 +100,25 @@ namespace StockTicker.Backend
                         return null;
                     }
 
-                    JToken res = obj["quoteResponse"]["result"].First;
-
-                    StockQuote quote = CreateStockQuote(res);
-                    if (quote != null)
+                    var jp = obj.Properties().First();
+                    StockQuote quote = jp.Value["quote"].ToObject<StockQuote>();
+                    if (quote.ChangePercent.HasValue)
                     {
-                        var symbolData = new SymbolData(quote?.Symbol, quote, null);
-
-                        Logger.Instance.LogMessage(TracingLevel.DEBUG, $"DEBUG: Symbol {stockSymbol} Dict: {dictSymbolCache.Count} Quote: {quote.Symbol} SymbolData: {symbolData.SymbolName}");
-    
-                        dictSymbolCache[stockSymbol] = new SymbolCache(DateTime.Now, symbolData);
-                        Logger.Instance.LogMessage(TracingLevel.INFO, $"{this.GetType()} GetSymbol retrieved Symbol: {stockSymbol}");
-                        return symbolData;
+                        quote.ChangePercent *= 100;
                     }
+
+                    var symbolData = new SymbolData(quote?.Symbol, quote);
+                    dictSymbolCache[stockSymbol] = new SymbolCache(DateTime.Now, symbolData);
+                    Logger.Instance.LogMessage(TracingLevel.INFO, $"{this.GetType()} GetSymbol retrieved Symbol: {stockSymbol}");
+                    return symbolData;
                 }
                 else
                 {
-                    Logger.Instance.LogMessage(TracingLevel.ERROR, $"{this.GetType()} GetSymbol obj invalid response: {response.StatusCode}");
+                    Logger.Instance.LogMessage(TracingLevel.ERROR, $"{this.GetType()} GetSymbol invalid response: {response.StatusCode}");
 
                     if (response.StatusCode == System.Net.HttpStatusCode.Forbidden)
                     {
-                        TokenManager.Instance.SetTokenFailed();
+                        TokenManager.Instance.SetStockTokenFailed();
                     }
                 }
             }
@@ -126,12 +131,8 @@ namespace StockTicker.Backend
 
         public void SetStockToken(string token)
         {
-            Logger.Instance.LogMessage(TracingLevel.ERROR, $"SetStockToken called but {this.GetType()} does not require a token");
+            TokenManager.Instance.InitStockToken(token.Trim(), DateTime.Now);
         }
-
-        #endregion
-
-        #region Private Methods
 
         private async Task<HttpResponseMessage> StockQuery(string uriPath, List<KeyValuePair<string, string>> optionalContent)
         {
@@ -149,31 +150,8 @@ namespace StockTicker.Backend
                     }
                     queryParams = "?" + string.Join("&", paramList);
                 }
-                return await client.GetAsync($"{uriPath}{queryParams}");
+                return await client.GetAsync($"{STOCK_URI_PREFIX}{uriPath}{queryParams}");
             }
         }
-
-        private StockQuote CreateStockQuote(JToken quoteInfo)
-        {
-            if (quoteInfo == null)
-            {
-                return null;
-            }
-
-            return new StockQuote()
-            {
-                Change = (double)quoteInfo["regularMarketChange"],
-                ChangePercent = (double)quoteInfo["regularMarketChangePercent"],
-                Close = (double)quoteInfo["regularMarketPreviousClose"],
-                LatestPrice = (double)quoteInfo["regularMarketPrice"],
-                High = (double)quoteInfo["regularMarketDayHigh"],
-                Low = (double)quoteInfo["regularMarketDayLow"],
-                Symbol = (string)quoteInfo["symbol"],
-                LatestSource = (string)quoteInfo["marketState"]
-            };
-        }
-
-        #endregion
     }
-
 }

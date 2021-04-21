@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace StockTicker.Backend
+namespace StockTicker.Backend.Stocks
 {
     internal interface IStockInfoProvider
     {

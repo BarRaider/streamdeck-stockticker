@@ -1,10 +1,9 @@
 ﻿using BarRaider.SdTools;
-using StockTicker.BarRaider.StockTicker;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace StockTicker.Backend
+namespace StockTicker.Backend.Stocks
 {
     internal static class StocksFactory
     {

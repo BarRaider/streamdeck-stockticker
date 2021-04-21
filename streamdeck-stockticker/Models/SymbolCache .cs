@@ -1,10 +1,11 @@
 ﻿using Newtonsoft.Json.Linq;
 using StockTicker.Backend;
+using StockTicker.Backend.Stocks;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace StockTicker.Wrappers
+namespace StockTicker.Models
 {
     internal class SymbolCache
     {

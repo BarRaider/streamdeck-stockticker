@@ -1,4 +1,5 @@
 ﻿using BarRaider.SdTools;
+using StockTicker.Backend.Stocks;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -16,7 +17,8 @@ namespace StockTicker.Backend
         private static readonly object objLock = new object();
 
         private APIToken token;
-        private bool failedToken = false;
+        private bool failedStockToken = false;
+        private bool failedCurrencyToken = false;
 
         #endregion
 
@@ -56,47 +58,57 @@ namespace StockTicker.Backend
 
         #region Public Methods
 
-        public bool TokenExists
-        {
-            get
-            {
-                return (token != null && !string.IsNullOrWhiteSpace(token.StockToken) && !failedToken);
-            }
-        }
+        public bool StockTokenExists    => token != null && !string.IsNullOrWhiteSpace(token.StockToken) && !failedStockToken;
+        public bool CurrencyTokenExists => token != null && !string.IsNullOrWhiteSpace(token.CurrencyToken) && !failedCurrencyToken;
+        public bool TokenExists => StockTokenExists || CurrencyTokenExists;
 
-        internal APIToken Token
-        {
-            get
-            {
-                if (!TokenExists)
-                {
-                    return null;
-                }
-                return new APIToken() { StockToken = token.StockToken, TokenLastRefresh = token.TokenLastRefresh};
-            }
-        }
+        internal APIToken Token => TokenExists ? new APIToken() { StockToken = token.StockToken, CurrencyToken = token.CurrencyToken, TokenLastRefresh = token.TokenLastRefresh }
+                                               : null;
 
-        internal void InitTokens(string stockToken, DateTime tokenCreateDate)
+        internal void InitStockToken(string stockToken, DateTime tokenCreateDate)
         {
-            Logger.Instance.LogMessage(TracingLevel.INFO, "InitTokens called");
+            Logger.Instance.LogMessage(TracingLevel.INFO, "InitStockToken called");
             if (token == null || token.TokenLastRefresh < tokenCreateDate)
             {
                 if (String.IsNullOrWhiteSpace(stockToken))
                 {
-                    Logger.Instance.LogMessage(TracingLevel.WARN, "InitTokens: Token revocation!");
+                    Logger.Instance.LogMessage(TracingLevel.WARN, "InitStockToken: Token revocation!");
                 }
-                token = new APIToken() { StockToken = stockToken, TokenLastRefresh = tokenCreateDate };
-                failedToken = false;
+                token = new APIToken() { StockToken = stockToken, CurrencyToken = token?.CurrencyToken, TokenLastRefresh = tokenCreateDate };
+                failedStockToken = false;
                 SaveToken();
-                Logger.Instance.LogMessage(TracingLevel.INFO, $"New token saved: {stockToken}");
+                Logger.Instance.LogMessage(TracingLevel.INFO, $"New stock token saved: {stockToken}");
             }
             TokensChanged?.Invoke(this, new APITokenEventArgs(TokenExists));
         }
 
-        internal void SetTokenFailed()
+        internal void InitCurrencyToken(string currencyToken, DateTime tokenCreateDate)
         {
-            Logger.Instance.LogMessage(TracingLevel.INFO, $"SetTokenFailed Called!");
-            failedToken = true;
+            Logger.Instance.LogMessage(TracingLevel.INFO, "InitCurrencyToken called");
+            if (token == null || token.TokenLastRefresh < tokenCreateDate)
+            {
+                if (String.IsNullOrWhiteSpace(currencyToken))
+                {
+                    Logger.Instance.LogMessage(TracingLevel.WARN, "InitCurrencyToken: Token revocation!");
+                }
+                token = new APIToken() { StockToken = token?.StockToken, CurrencyToken = currencyToken, TokenLastRefresh = tokenCreateDate };
+                failedCurrencyToken = false;
+                SaveToken();
+                Logger.Instance.LogMessage(TracingLevel.INFO, $"New currency token saved: {currencyToken}");
+            }
+            TokensChanged?.Invoke(this, new APITokenEventArgs(TokenExists));
+        }
+
+        internal void SetStockTokenFailed()
+        {
+            Logger.Instance.LogMessage(TracingLevel.INFO, $"SetStockTokenFailed Called!");
+            failedStockToken = true;
+        }
+
+        internal void SetCurrencyTokenFailed()
+        {
+            Logger.Instance.LogMessage(TracingLevel.INFO, $"SetCurrencyTokenFailed Called!");
+            failedCurrencyToken = true;
         }
 
         #endregion

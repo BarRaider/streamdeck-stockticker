@@ -8,110 +8,389 @@
     <title>BarRaider's Currency Ticker</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/barraider/streamdeck-easypi@latest/src/sdpi.css">
     <script src="https://cdn.jsdelivr.net/gh/barraider/streamdeck-easypi@latest/src/sdtools.common.js"></script>
+    <script src="../Currency.js"></script>
 </head>
 <body>
     <div class="sdpi-wrapper">
         <details class="message">
             <summary>For feedback/suggestions contact me at <span class="linkspan" onclick="openWebsite()">https://BarRaider.com</span> </summary>
         </details>
-        <div class="sdpi-item">
-            <div class="sdpi-item-label">Base Currency</div>
-            <select class="sdpi-item-value select sdProperty" id="baseCurrency" oninput="setSettings()">
-                <option value="AUD">AUD</option>
-                <option value="BGN">BGN</option>
-                <option value="BRL">BRL</option>
-                <option value="CAD">CAD</option>
-                <option value="CHF">CHF</option>
-                <option value="CNY">CNY</option>
-                <option value="CZK">CZK</option>
-                <option value="DKK">DKK</option>
-                <option value="EUR">EUR</option>
-                <option value="GBP">GBP</option>
-                <option value="HKD">HKD</option>
-                <option value="HRK">HRK</option>
-                <option value="HUF">HUF</option>
-                <option value="IDR">IDR</option>
-                <option value="ILS">ILS</option>
-                <option value="INR">INR</option>
-                <option value="ISK">ISK</option>
-                <option value="JPY">JPY</option>
-                <option value="KRW">KRW</option>
-                <option value="MXN">MXN</option>
-                <option value="MYR">MYR</option>
-                <option value="NOK">NOK</option>
-                <option value="NZD">NZD</option>
-                <option value="PHP">PHP</option>
-                <option value="PLN">PLN</option>
-                <option value="RON">RON</option>
-                <option value="RUB">RUB</option>
-                <option value="SEK">SEK</option>
-                <option value="SGD">SGD</option>
-                <option value="THB">THB</option>
-                <option value="TRY">TRY</option>
-                <option value="USD" selected>USD</option>
-                <option value="ZAR">ZAR</option>
-            </select>
-        </div>
-
-        <div class="sdpi-item" id="dvBaseMultiplier">
-            <div class="sdpi-item-label">Base Multiplier</div>
-            <input class="sdpi-item-value sdProperty" id="multiplier" inputmode="numeric" pattern="[0-9]*" type="number" oninput="setSettings()">
-        </div>
 
         <div class="sdpi-item">
-            <div class="sdpi-item-label">Symbol</div>
-            <select class="sdpi-item-value select sdProperty" id="symbol" oninput="setSettings()">
-                <option value="AUD">AUD</option>
-                <option value="BGN">BGN</option>
-                <option value="BRL">BRL</option>
-                <option value="CAD">CAD</option>
-                <option value="CHF">CHF</option>
-                <option value="CNY">CNY</option>
-                <option value="CZK">CZK</option>
-                <option value="DKK">DKK</option>
-                <option value="EUR" selected>EUR</option>
-                <option value="GBP">GBP</option>
-                <option value="HKD">HKD</option>
-                <option value="HRK">HRK</option>
-                <option value="HUF">HUF</option>
-                <option value="IDR">IDR</option>
-                <option value="ILS">ILS</option>
-                <option value="INR">INR</option>
-                <option value="ISK">ISK</option>
-                <option value="JPY">JPY</option>
-                <option value="KRW">KRW</option>
-                <option value="MXN">MXN</option>
-                <option value="MYR">MYR</option>
-                <option value="NOK">NOK</option>
-                <option value="NZD">NZD</option>
-                <option value="PHP">PHP</option>
-                <option value="PLN">PLN</option>
-                <option value="RON">RON</option>
-                <option value="RUB">RUB</option>
-                <option value="SEK">SEK</option>
-                <option value="SGD">SGD</option>
-                <option value="THB">THB</option>
-                <option value="TRY">TRY</option>
-                <option value="USD">USD</option>
-                <option value="ZAR">ZAR</option>
-            </select>
+            <div class="sdpi-item-label">API Key</div>
+            <input class="sdpi-item-value sdProperty" placeholder="API Key" value="" id="apiToken" oninput="setSettings()">
         </div>
+        <details class="message">
+            <summary>Need an API key? <span class="linkspan">Click here</span> </summary>
+            <p>
+                The service we're using now requires an API key to get currency data. The good news: it's easy to get one. Just <span class="linkspan" onclick="openAPISite()">click here</span> and enter your email. Check your inbox for the API key. <b>Make sure you click the 'VERIFY EMAIL' link in the email</b> otherwise the key won't work.
+            </p>
+        </details>
+        <div id="dvAllSettings" style="display:none;">
+            <div class="sdpi-item">
+                <div class="sdpi-item-label">Base Currency</div>
+                <select class="sdpi-item-value select sdProperty" id="baseCurrency" oninput="setSettings()">
+                    <option value=0>AED</option>
+                    <option value=1>AFN</option>
+                    <option value=2>ALL</option>
+                    <option value=3>AMD</option>
+                    <option value=4>ANG</option>
+                    <option value=5>AOA</option>
+                    <option value=6>ARS</option>
+                    <option value=7>AUD</option>
+                    <option value=8>AWG</option>
+                    <option value=9>AZN</option>
+                    <option value=10>BAM</option>
+                    <option value=11>BBD</option>
+                    <option value=12>BDT</option>
+                    <option value=13>BGN</option>
+                    <option value=14>BHD</option>
+                    <option value=15>BIF</option>
+                    <option value=16>BMD</option>
+                    <option value=17>BND</option>
+                    <option value=18>BOB</option>
+                    <option value=19>BRL</option>
+                    <option value=20>BSD</option>
+                    <option value=21>BTC</option>
+                    <option value=22>BTN</option>
+                    <option value=23>BWP</option>
+                    <option value=24>BYN</option>
+                    <option value=25>BYR</option>
+                    <option value=26>BZD</option>
+                    <option value=27>CAD</option>
+                    <option value=28>CDF</option>
+                    <option value=29>CHF</option>
+                    <option value=30>CLF</option>
+                    <option value=31>CLP</option>
+                    <option value=32>CNY</option>
+                    <option value=33>COP</option>
+                    <option value=34>CRC</option>
+                    <option value=35>CUC</option>
+                    <option value=36>CUP</option>
+                    <option value=37>CVE</option>
+                    <option value=38>CZK</option>
+                    <option value=39>DJF</option>
+                    <option value=40>DKK</option>
+                    <option value=41>DOP</option>
+                    <option value=42>DZD</option>
+                    <option value=43>EGP</option>
+                    <option value=44>ERN</option>
+                    <option value=45>ETB</option>
+                    <option value=46>EUR</option>
+                    <option value=47>FJD</option>
+                    <option value=48>FKP</option>
+                    <option value=49>GBP</option>
+                    <option value=50>GEL</option>
+                    <option value=51>GGP</option>
+                    <option value=52>GHS</option>
+                    <option value=53>GIP</option>
+                    <option value=54>GMD</option>
+                    <option value=55>GNF</option>
+                    <option value=56>GTQ</option>
+                    <option value=57>GYD</option>
+                    <option value=58>HKD</option>
+                    <option value=59>HNL</option>
+                    <option value=60>HRK</option>
+                    <option value=61>HTG</option>
+                    <option value=62>HUF</option>
+                    <option value=63>IDR</option>
+                    <option value=64>ILS</option>
+                    <option value=65>IMP</option>
+                    <option value=66>INR</option>
+                    <option value=67>IQD</option>
+                    <option value=68>IRR</option>
+                    <option value=69>ISK</option>
+                    <option value=70>JEP</option>
+                    <option value=71>JMD</option>
+                    <option value=72>JOD</option>
+                    <option value=73>JPY</option>
+                    <option value=74>KES</option>
+                    <option value=75>KGS</option>
+                    <option value=76>KHR</option>
+                    <option value=77>KMF</option>
+                    <option value=78>KPW</option>
+                    <option value=79>KRW</option>
+                    <option value=80>KWD</option>
+                    <option value=81>KYD</option>
+                    <option value=82>KZT</option>
+                    <option value=83>LAK</option>
+                    <option value=84>LBP</option>
+                    <option value=85>LKR</option>
+                    <option value=86>LRD</option>
+                    <option value=87>LSL</option>
+                    <option value=88>LVL</option>
+                    <option value=89>LYD</option>
+                    <option value=90>MAD</option>
+                    <option value=91>MDL</option>
+                    <option value=92>MGA</option>
+                    <option value=93>MKD</option>
+                    <option value=94>MMK</option>
+                    <option value=95>MNT</option>
+                    <option value=96>MOP</option>
+                    <option value=97>MRO</option>
+                    <option value=98>MUR</option>
+                    <option value=99>MVR</option>
+                    <option value=100>MWK</option>
+                    <option value=101>MXN</option>
+                    <option value=102>MYR</option>
+                    <option value=103>MZN</option>
+                    <option value=104>NAD</option>
+                    <option value=105>NGN</option>
+                    <option value=106>NIO</option>
+                    <option value=107>NOK</option>
+                    <option value=108>NPR</option>
+                    <option value=109>NZD</option>
+                    <option value=110>OMR</option>
+                    <option value=111>PAB</option>
+                    <option value=112>PEN</option>
+                    <option value=113>PGK</option>
+                    <option value=114>PHP</option>
+                    <option value=115>PKR</option>
+                    <option value=116>PLN</option>
+                    <option value=117>PYG</option>
+                    <option value=118>QAR</option>
+                    <option value=119>RON</option>
+                    <option value=120>RSD</option>
+                    <option value=121>RUB</option>
+                    <option value=122>RWF</option>
+                    <option value=123>SAR</option>
+                    <option value=124>SBD</option>
+                    <option value=125>SCR</option>
+                    <option value=126>SDG</option>
+                    <option value=127>SEK</option>
+                    <option value=128>SGD</option>
+                    <option value=129>SHP</option>
+                    <option value=130>SLL</option>
+                    <option value=131>SOS</option>
+                    <option value=132>SRD</option>
+                    <option value=133>STD</option>
+                    <option value=134>SVC</option>
+                    <option value=135>SYP</option>
+                    <option value=136>SZL</option>
+                    <option value=137>THB</option>
+                    <option value=138>TJS</option>
+                    <option value=139>TMT</option>
+                    <option value=140>TND</option>
+                    <option value=141>TOP</option>
+                    <option value=142>TRY</option>
+                    <option value=143>TTD</option>
+                    <option value=144>TWD</option>
+                    <option value=145>TZS</option>
+                    <option value=146>UAH</option>
+                    <option value=147>UGX</option>
+                    <option value=148 selected>USD</option>
+                    <option value=149>UYU</option>
+                    <option value=150>UZS</option>
+                    <option value=151>VEF</option>
+                    <option value=152>VND</option>
+                    <option value=153>VUV</option>
+                    <option value=154>WST</option>
+                    <option value=155>XAF</option>
+                    <option value=156>XAG</option>
+                    <option value=157>XCD</option>
+                    <option value=158>XDR</option>
+                    <option value=159>XOF</option>
+                    <option value=160>XPF</option>
+                    <option value=161>YER</option>
+                    <option value=162>ZAR</option>
+                    <option value=163>ZMK</option>
+                    <option value=164>ZMW</option>
+                    <option value=165>ZWL</option>
+                </select>
+            </div>
 
-        <div type="color" class="sdpi-item" id="dvForground">
-            <div class="sdpi-item-label">Foreground</div>
-            <input type="color" class="sdpi-item-value sdProperty" value="#000000" id="foregroundColor" oninput="setSettings()">
-        </div>
+            <div class="sdpi-item" id="dvBaseMultiplier">
+                <div class="sdpi-item-label">Base Multiplier</div>
+                <input class="sdpi-item-value sdProperty" id="multiplier" inputmode="numeric" pattern="[0-9]*" type="number" oninput="setSettings()">
+            </div>
 
-        <div type="color" class="sdpi-item" id="dvBackground">
-            <div class="sdpi-item-label">Background</div>
-            <input type="color" class="sdpi-item-value sdProperty" value="#ffffff" id="backgroundColor" oninput="setSettings()">
-        </div>
-        <div class="sdpi-item" id="dvBackgroundImage">
-            <div class="sdpi-item-label">Background Image</div>
-            <div class="sdpi-item-group file" id="filepickergroup">
-                <input class="sdpi-item-value sdProperty sdFile" type="file" id="backgroundImage" accept=".jpg, .jpeg, .png, .ico, .gif, .bmp, .tiff" oninput="setSettings()">
-                <label class="sdpi-file-info " for="backgroundImage" id="backgroundImageFilename">No file...</label>
-                <label class="sdpi-file-label" for="backgroundImage">Choose file...</label>
+            <div class="sdpi-item">
+                <div class="sdpi-item-label">Symbol</div>
+                <select class="sdpi-item-value select sdProperty" id="symbol" oninput="setSettings()">
+                    <option value=0>AED</option>
+                    <option value=1>AFN</option>
+                    <option value=2>ALL</option>
+                    <option value=3>AMD</option>
+                    <option value=4>ANG</option>
+                    <option value=5>AOA</option>
+                    <option value=6>ARS</option>
+                    <option value=7>AUD</option>
+                    <option value=8>AWG</option>
+                    <option value=9>AZN</option>
+                    <option value=10>BAM</option>
+                    <option value=11>BBD</option>
+                    <option value=12>BDT</option>
+                    <option value=13>BGN</option>
+                    <option value=14>BHD</option>
+                    <option value=15>BIF</option>
+                    <option value=16>BMD</option>
+                    <option value=17>BND</option>
+                    <option value=18>BOB</option>
+                    <option value=19>BRL</option>
+                    <option value=20>BSD</option>
+                    <option value=21>BTC</option>
+                    <option value=22>BTN</option>
+                    <option value=23>BWP</option>
+                    <option value=24>BYN</option>
+                    <option value=25>BYR</option>
+                    <option value=26>BZD</option>
+                    <option value=27>CAD</option>
+                    <option value=28>CDF</option>
+                    <option value=29>CHF</option>
+                    <option value=30>CLF</option>
+                    <option value=31>CLP</option>
+                    <option value=32>CNY</option>
+                    <option value=33>COP</option>
+                    <option value=34>CRC</option>
+                    <option value=35>CUC</option>
+                    <option value=36>CUP</option>
+                    <option value=37>CVE</option>
+                    <option value=38>CZK</option>
+                    <option value=39>DJF</option>
+                    <option value=40>DKK</option>
+                    <option value=41>DOP</option>
+                    <option value=42>DZD</option>
+                    <option value=43>EGP</option>
+                    <option value=44>ERN</option>
+                    <option value=45>ETB</option>
+                    <option value=46 selected>EUR</option>
+                    <option value=47>FJD</option>
+                    <option value=48>FKP</option>
+                    <option value=49>GBP</option>
+                    <option value=50>GEL</option>
+                    <option value=51>GGP</option>
+                    <option value=52>GHS</option>
+                    <option value=53>GIP</option>
+                    <option value=54>GMD</option>
+                    <option value=55>GNF</option>
+                    <option value=56>GTQ</option>
+                    <option value=57>GYD</option>
+                    <option value=58>HKD</option>
+                    <option value=59>HNL</option>
+                    <option value=60>HRK</option>
+                    <option value=61>HTG</option>
+                    <option value=62>HUF</option>
+                    <option value=63>IDR</option>
+                    <option value=64>ILS</option>
+                    <option value=65>IMP</option>
+                    <option value=66>INR</option>
+                    <option value=67>IQD</option>
+                    <option value=68>IRR</option>
+                    <option value=69>ISK</option>
+                    <option value=70>JEP</option>
+                    <option value=71>JMD</option>
+                    <option value=72>JOD</option>
+                    <option value=73>JPY</option>
+                    <option value=74>KES</option>
+                    <option value=75>KGS</option>
+                    <option value=76>KHR</option>
+                    <option value=77>KMF</option>
+                    <option value=78>KPW</option>
+                    <option value=79>KRW</option>
+                    <option value=80>KWD</option>
+                    <option value=81>KYD</option>
+                    <option value=82>KZT</option>
+                    <option value=83>LAK</option>
+                    <option value=84>LBP</option>
+                    <option value=85>LKR</option>
+                    <option value=86>LRD</option>
+                    <option value=87>LSL</option>
+                    <option value=88>LVL</option>
+                    <option value=89>LYD</option>
+                    <option value=90>MAD</option>
+                    <option value=91>MDL</option>
+                    <option value=92>MGA</option>
+                    <option value=93>MKD</option>
+                    <option value=94>MMK</option>
+                    <option value=95>MNT</option>
+                    <option value=96>MOP</option>
+                    <option value=97>MRO</option>
+                    <option value=98>MUR</option>
+                    <option value=99>MVR</option>
+                    <option value=100>MWK</option>
+                    <option value=101>MXN</option>
+                    <option value=102>MYR</option>
+                    <option value=103>MZN</option>
+                    <option value=104>NAD</option>
+                    <option value=105>NGN</option>
+                    <option value=106>NIO</option>
+                    <option value=107>NOK</option>
+                    <option value=108>NPR</option>
+                    <option value=109>NZD</option>
+                    <option value=110>OMR</option>
+                    <option value=111>PAB</option>
+                    <option value=112>PEN</option>
+                    <option value=113>PGK</option>
+                    <option value=114>PHP</option>
+                    <option value=115>PKR</option>
+                    <option value=116>PLN</option>
+                    <option value=117>PYG</option>
+                    <option value=118>QAR</option>
+                    <option value=119>RON</option>
+                    <option value=120>RSD</option>
+                    <option value=121>RUB</option>
+                    <option value=122>RWF</option>
+                    <option value=123>SAR</option>
+                    <option value=124>SBD</option>
+                    <option value=125>SCR</option>
+                    <option value=126>SDG</option>
+                    <option value=127>SEK</option>
+                    <option value=128>SGD</option>
+                    <option value=129>SHP</option>
+                    <option value=130>SLL</option>
+                    <option value=131>SOS</option>
+                    <option value=132>SRD</option>
+                    <option value=133>STD</option>
+                    <option value=134>SVC</option>
+                    <option value=135>SYP</option>
+                    <option value=136>SZL</option>
+                    <option value=137>THB</option>
+                    <option value=138>TJS</option>
+                    <option value=139>TMT</option>
+                    <option value=140>TND</option>
+                    <option value=141>TOP</option>
+                    <option value=142>TRY</option>
+                    <option value=143>TTD</option>
+                    <option value=144>TWD</option>
+                    <option value=145>TZS</option>
+                    <option value=146>UAH</option>
+                    <option value=147>UGX</option>
+                    <option value=148>USD</option>
+                    <option value=149>UYU</option>
+                    <option value=150>UZS</option>
+                    <option value=151>VEF</option>
+                    <option value=152>VND</option>
+                    <option value=153>VUV</option>
+                    <option value=154>WST</option>
+                    <option value=155>XAF</option>
+                    <option value=156>XAG</option>
+                    <option value=157>XCD</option>
+                    <option value=158>XDR</option>
+                    <option value=159>XOF</option>
+                    <option value=160>XPF</option>
+                    <option value=161>YER</option>
+                    <option value=162>ZAR</option>
+                    <option value=163>ZMK</option>
+                    <option value=164>ZMW</option>
+                    <option value=165>ZWL</option>
+                </select>
+            </div>
+            <div type="color" class="sdpi-item" id="dvForground">
+                <div class="sdpi-item-label">Foreground</div>
+                <input type="color" class="sdpi-item-value sdProperty" value="#000000" id="foregroundColor" oninput="setSettings()">
+            </div>
+
+            <div type="color" class="sdpi-item" id="dvBackground">
+                <div class="sdpi-item-label">Background</div>
+                <input type="color" class="sdpi-item-value sdProperty" value="#ffffff" id="backgroundColor" oninput="setSettings()">
+            </div>
+            <div class="sdpi-item" id="dvBackgroundImage">
+                <div class="sdpi-item-label">Background Image</div>
+                <div class="sdpi-item-group file" id="filepickergroup">
+                    <input class="sdpi-item-value sdProperty sdFile" type="file" id="backgroundImage" accept=".jpg, .jpeg, .png, .ico, .gif, .bmp, .tiff" oninput="setSettings()">
+                    <label class="sdpi-file-info " for="backgroundImage" id="backgroundImageFilename">No file...</label>
+                    <label class="sdpi-file-label" for="backgroundImage">Choose file...</label>
+                </div>
             </div>
         </div>
     </div>

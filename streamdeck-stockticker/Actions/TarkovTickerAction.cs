@@ -8,6 +8,7 @@ using System.Text;
 using System.Linq;
 using System.Drawing;
 using System.Threading.Tasks;
+using StockTicker.Backend.Crypto;
 
 namespace StockTicker.Actions
 {

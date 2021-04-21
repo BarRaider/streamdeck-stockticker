@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace StockTicker.Wrappers
+namespace StockTicker.Models
 {
     public class Quote
     {

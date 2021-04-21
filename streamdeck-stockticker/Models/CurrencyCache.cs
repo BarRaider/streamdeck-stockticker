@@ -3,18 +3,20 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace StockTicker.Wrappers
+namespace StockTicker.Models
 {
     internal class CurrencyCache
     {
         public DateTime LastRefresh { get; private set; }
 
-        public JObject CurrencyData { get; private set; }
+        public string Symbol { get; private set; }
+        public float Value { get; private set; }
 
-        public CurrencyCache(DateTime lastRefresh, JObject currencyData)
+        public CurrencyCache(DateTime lastRefresh, string symbol, float value)
         {
             LastRefresh = lastRefresh;
-            CurrencyData = currencyData;
+            Symbol = symbol;
+            Value = value;
         }
     }
 }

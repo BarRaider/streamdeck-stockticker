@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace StockTicker.BarRaider.StockTicker
+namespace StockTicker.Backend.Stocks
 {
     internal enum StockProviders
     {

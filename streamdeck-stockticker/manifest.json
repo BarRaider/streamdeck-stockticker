@@ -62,11 +62,11 @@
     }
   ],
   "Author": "BarRaider",
-  "Description": "View live quotes of your favorite stocks, directly on the Stream Deck. Supports Currencies and CryptoCurrencies\nNEW: Save space by having multiple stocks rotated on one key",
+  "Description": "Stock, Currency and Crypto all in one plugin! View live data on the Stream Deck.\nNEW: Save space by having multiple stocks rotated on one key.",
   "Name": "Stock & Currency",
   "Icon": "Images/pluginIcon",
   "URL": "https://BarRaider.com/",
-  "Version": "1.7",
+  "Version": "1.8",
   "CodePathWin": "com.barraider.stockticker.exe",
   "Category": "Stock Ticker [BarRaider]",
   "CategoryIcon": "Images/categoryIcon",
@@ -78,6 +78,6 @@
   ],
   "SDKVersion": 2,
   "Software": {
-    "MinimumVersion": "4.8"
+    "MinimumVersion": "4.9"
   }
 }
