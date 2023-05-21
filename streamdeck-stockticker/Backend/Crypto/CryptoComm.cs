@@ -16,6 +16,7 @@ namespace StockTicker.Backend.Crypto
 
         private const int REFRESH_SYMBOLS_SECONDS = 30;
         private const string ENDPOINT_URI = "https://api.binance.com/api/";
+        private const string ENDPOINT_URI_US = "https://api.binance.us/api/";
         private const string ENDPOINT_CURRENCIES_GENERAL_INFO = "v1/exchangeInfo";
         private const string ENDPOINT_SYMBOLS_PRICES = "v3/ticker/price";
 
@@ -30,6 +31,27 @@ namespace StockTicker.Backend.Crypto
         private readonly SemaphoreSlim refreshLock = new SemaphoreSlim(1,1);
         private readonly System.Timers.Timer tmrRefreshSymbols = new System.Timers.Timer();
         private DateTime lastRefresh;
+        private bool useUSEndpoint = false;
+        public bool UseUSEndpoint
+        {
+            get
+            {
+                return useUSEndpoint;
+            }
+
+            set
+            {
+                if (value != useUSEndpoint)
+                {
+                    useUSEndpoint = value;
+
+                    if (CryptoCurrencyUpdated != null)
+                    {
+                        _ = LoadSymbolsData();
+                    }
+                }
+            }
+        }
         
         #endregion
 
@@ -108,7 +130,8 @@ namespace StockTicker.Backend.Crypto
             try
             {
                 var client = new HttpClient();
-                string url = ENDPOINT_URI + ENDPOINT_CURRENCIES_GENERAL_INFO;
+                string endpoint = UseUSEndpoint ? ENDPOINT_URI_US : ENDPOINT_URI;
+                string url = endpoint + ENDPOINT_CURRENCIES_GENERAL_INFO;
                 var response = await client.GetAsync(url);
 
                 if (!response.IsSuccessStatusCode)
@@ -132,7 +155,8 @@ namespace StockTicker.Backend.Crypto
             try
             {
                 var client = new HttpClient();
-                string url = ENDPOINT_URI + ENDPOINT_SYMBOLS_PRICES;
+                string endpoint = UseUSEndpoint ? ENDPOINT_URI_US : ENDPOINT_URI;
+                string url = endpoint + ENDPOINT_SYMBOLS_PRICES;
                 var response = await client.GetAsync(url);
 
                 if (!response.IsSuccessStatusCode)

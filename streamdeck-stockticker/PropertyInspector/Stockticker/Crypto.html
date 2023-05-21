@@ -23,7 +23,13 @@
             <div class="sdpi-item-label">Quote</div>
             <select class="sdpi-item-value select sdProperty sdList" id="quotes" oninput="setSettings()" sdListTextProperty="name" sdListValueProperty="name" sdValueField="quotesSelected"></select>
         </div>
-
+        <div type="checkbox" class="sdpi-item" id="dvUSEndpoint">
+            <div class="sdpi-item-label">USA</div>
+            <div class="sdpi-item-value">
+                <input id="useUSEndpoint" type="checkbox" value="" class="sdProperty sdCheckbox" oninput="setSettings()">
+                <label for="useUSEndpoint" class="sdpi-item-label"><span></span>Use US endpoint</label>
+            </div>
+        </div>
         <div type="color" class="sdpi-item" id="dvForground">
             <div class="sdpi-item-label">Foreground</div>
             <input type="color" class="sdpi-item-value sdProperty" value="#000000" id="foregroundColor" oninput="setSettings()">

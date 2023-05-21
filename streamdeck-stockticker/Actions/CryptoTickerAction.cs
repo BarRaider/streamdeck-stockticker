@@ -10,11 +10,12 @@ using System.Threading.Tasks;
 using System.IO;
 using StockTicker.Backend.Crypto;
 using StockTicker.Models;
+using StockTicker.Backend;
 
 namespace StockTicker.Actions
 {
     [PluginActionId("com.barraider.cryptoticker")]
-    public class CryptoTickerAction : PluginBase
+    public class CryptoTickerAction : KeypadBase
     {
         #region Settings
 
@@ -28,7 +29,8 @@ namespace StockTicker.Actions
                     Quote = "TUSD",
                     ForegroundColor = "#ffffff",
                     BackgroundColor = "#000000",
-                    BackgroundImage = null
+                    BackgroundImage = null,
+                    UseUSEndpoint = false
                 };
 
                 return instance;
@@ -55,6 +57,9 @@ namespace StockTicker.Actions
             [FilenameProperty]
             [JsonProperty(PropertyName = "backgroundImage")]
             public string BackgroundImage { get; set; }
+
+            [JsonProperty(PropertyName = "useUSEndpoint")]
+            public bool UseUSEndpoint { get; set; }
         }
 
         #endregion
@@ -65,6 +70,8 @@ namespace StockTicker.Actions
         protected CryptoSymbolData symbolData;
         protected string defaultImageLocation = null;
         private Image backgroundImage;
+        private TickerGlobalSettings global = null;
+        private bool globalSettingsLoaded = false;
 
         public string CryptoSymbol
         {
@@ -73,7 +80,7 @@ namespace StockTicker.Actions
                 return $"{settings.BaseCurrency}{settings.Quote}";
             }
         }
-        
+
         public CryptoTickerAction(SDConnection connection, InitialPayload payload) : base(connection, payload)
         {
             if (payload.Settings == null || payload.Settings.Count == 0) // Called the first time you drop a new action into the Stream Deck
@@ -90,6 +97,7 @@ namespace StockTicker.Actions
             CryptoComm.Instance.GetLatestSymbols();
             InitializeSettings();
             SaveSettings();
+            Connection.GetGlobalSettingsAsync();
         }
 
         public override void Dispose()
@@ -112,15 +120,56 @@ namespace StockTicker.Actions
             await DrawCurrencyData(symbolData.Price, 1);
         }
 
-        public override void ReceivedGlobalSettings(ReceivedGlobalSettingsPayload payload) { }
+        public override void ReceivedGlobalSettings(ReceivedGlobalSettingsPayload payload)
+        {
+            globalSettingsLoaded = true;
+
+            // Global Settings exist
+            if (payload?.Settings != null && payload.Settings.Count > 0)
+            {
+                global = payload.Settings.ToObject<TickerGlobalSettings>();
+                CryptoComm.Instance.UseUSEndpoint = global.UseUSEndpoint;
+                settings.UseUSEndpoint = global.UseUSEndpoint;
+                SaveSettings();
+            }
+            else  // Global settings do not exist
+            {
+                Logger.Instance.LogMessage(TracingLevel.WARN, $"{this.GetType()}  Global Settings do not exist!");
+                SetGlobalSettings();
+            }
+        }
 
         public override void ReceivedSettings(ReceivedSettingsPayload payload)
         {
+            bool useUSEndpoint = settings.UseUSEndpoint;
             Tools.AutoPopulateSettings(settings, payload.Settings);
             LoadCurrencyLists();
             CryptoComm.Instance.GetLatestSymbols();
             InitializeSettings();
             SaveSettings();
+
+            if (useUSEndpoint != settings.UseUSEndpoint)
+            {
+                SetGlobalSettings();
+            }
+        }
+
+        private void SetGlobalSettings()
+        {
+            if (!globalSettingsLoaded)
+            {
+                Logger.Instance.LogMessage(TracingLevel.INFO, $"{this.GetType()} Ignoring SetGlobalSettings as they were not yet loaded");
+                return;
+            }
+
+            if (global == null)
+            {
+                Logger.Instance.LogMessage(TracingLevel.WARN, $"{this.GetType()} SetGlobalSettings called while Global Settings are null");
+                global = new TickerGlobalSettings();
+            }
+
+            global.UseUSEndpoint = settings.UseUSEndpoint;
+            Connection.SetGlobalSettingsAsync(JObject.FromObject(global));
         }
 
         private void Instance_CryptoCurrencyUpdated(object sender, CryptoCurrencyUpdatedEventArgs e)

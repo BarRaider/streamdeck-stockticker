@@ -14,11 +14,17 @@
         <details class="message">
             <summary>For feedback/suggestions contact me at <span class="linkspan" onclick="openWebsite()">https://BarRaider.com</span> </summary>
         </details>
+        <div type="checkbox" class="sdpi-item" id="dvUSEndpoint">
+            <div class="sdpi-item-label">USA</div>
+            <div class="sdpi-item-value">
+                <input id="useUSEndpoint" type="checkbox" value="" class="sdProperty sdCheckbox" oninput="setSettings()">
+                <label for="useUSEndpoint" class="sdpi-item-label"><span></span>Use US endpoint</label>
+            </div>
+        </div>
         <div type="color" class="sdpi-item" id="dvForground">
             <div class="sdpi-item-label">Foreground</div>
             <input type="color" class="sdpi-item-value sdProperty" value="#000000" id="foregroundColor" oninput="setSettings()">
         </div>
-
         <div type="color" class="sdpi-item" id="dvBackground">
             <div class="sdpi-item-label">Background</div>
             <input type="color" class="sdpi-item-value sdProperty" value="#ffffff" id="backgroundColor" oninput="setSettings()">
