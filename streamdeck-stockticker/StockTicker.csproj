@@ -1,20 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFrameworks>netcoreapp2.2;net472</TargetFrameworks>
+    <TargetFrameworks>net48</TargetFrameworks>
     <ApplicationIcon>brlogo.ico</ApplicationIcon>
     <StartupObject>StockTicker.Program</StartupObject>
     <AssemblyName>com.barraider.stockticker</AssemblyName>
-  </PropertyGroup>
-  <PropertyGroup>
-    <PublishFolder>bin\$(Configuration)\com.barraider.stockticker.sdplugin</PublishFolder>
-  </PropertyGroup>
-  <PropertyGroup>
+	  <Copyright>Copyright ©  2023</Copyright>
+	  <OutputPath>bin\$(Configuration)\com.barraider.stockticker.sdPlugin\</OutputPath>
+	  <LangVersion>8.0</LangVersion>
+	  <Platforms>AnyCPU</Platforms>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Authors>BarRaider</Authors>
     <Version>0</Version>
-    <Copyright>Copyright ©  2021</Copyright>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard2.0|AnyCPU'">
     <OutputPath>bin\debug\com.barraider.stockticker.dll</OutputPath>
@@ -35,10 +33,9 @@
     <OutputPath>bin\release\com.barraider.stockticker.core</OutputPath>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.Packaging.Tools.Trimming" Version="1.1.0-preview1-26619-01" />
-    <PackageReference Include="StreamDeck-Tools" Version="3.2.0" />
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="5.0.0" />
-    <PackageReference Include="System.Drawing.Common" Version="5.0.2" />
+    <PackageReference Include="StreamDeck-Tools" Version="6.1.1" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="7.0.0" />
+    <PackageReference Include="System.Drawing.Common" Version="7.0.0" />
     <PackageReference Include="System.Net.Http" Version="4.3.4" />
   </ItemGroup>
   <ItemGroup>

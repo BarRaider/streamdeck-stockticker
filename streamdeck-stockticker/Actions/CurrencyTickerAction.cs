@@ -12,8 +12,7 @@ using System.Threading.Tasks;
 namespace StockTicker.Actions
 {
     [PluginActionId("com.barraider.currencyexchange")]
-    public class CurrencyTickerAction
-        : PluginBase
+    public class CurrencyTickerAction : KeypadBase
     {
         #region Settings
 
