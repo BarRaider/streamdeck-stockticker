@@ -6,7 +6,8 @@ namespace StockTicker.Backend.Stocks
 {
     internal enum StockProviders
     {
-        YAHOO = 0,
-        IEXAPIS = 1
+        YAHOO_V6 = 0,
+        IEXAPIS = 1,
+        YAHOO_V11 = 2
     }
 }

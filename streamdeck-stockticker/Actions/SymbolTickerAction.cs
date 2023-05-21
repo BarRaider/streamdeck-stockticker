@@ -20,7 +20,7 @@ namespace StockTicker.Actions
     // 10 Bits: NomanSheikh
     //---------------------------------------------------
     [PluginActionId("com.barraider.stockticker")]
-    public class SymbolTickerAction : PluginBase
+    public class SymbolTickerAction : KeypadBase
     {
         private class PluginSettings
         {
@@ -33,7 +33,7 @@ namespace StockTicker.Actions
                     ApiToken = String.Empty,
                     BackgroundColor = "#000000",
                     BackgroundImage = null,
-                    StockProvider = StockProviders.YAHOO,
+                    StockProvider = StockProviders.YAHOO_V6,
                     ModeSingle = true,
                     ModeMultiple = false,
                     RotationSpeed = DEFAULT_ROTATION_SPEED_SECONDS.ToString(),

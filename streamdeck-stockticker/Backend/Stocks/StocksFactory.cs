@@ -11,10 +11,13 @@ namespace StockTicker.Backend.Stocks
         {
             switch (provider)
             {
-                case StockProviders.YAHOO:
-                    return YahooStockProvider.Instance;
+                case StockProviders.YAHOO_V6:
+                    return YahooV6StockProvider.Instance;
+                case StockProviders.YAHOO_V11:
+                    return YahooV11StockProvider.Instance;
                 case StockProviders.IEXAPIS:
                     return EXCloudStockProvider.Instance;
+
                 default:
                     Logger.Instance.LogMessage(TracingLevel.ERROR, $"StocksFactory.Build() Invalid Provider {provider}");
                     return null;

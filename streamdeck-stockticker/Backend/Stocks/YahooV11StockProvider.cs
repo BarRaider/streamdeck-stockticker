@@ -7,22 +7,18 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Net.WebRequestMethods;
 
 namespace StockTicker.Backend.Stocks
 {
 
-    public class YahooStockProvider : IStockInfoProvider
+    public class YahooV11StockProvider : IStockInfoProvider
     {
-
-        //---------------------------------------------------
-        //          BarRaider's Hall Of Fame
-        // Subscriber: SaintG85
-        //---------------------------------------------------
         #region Private Members
 
-        private const string STOCK_URI = @"https://query1.finance.yahoo.com/v7/finance/quote?lang=en-US&region=US&corsDomain=finance.yahoo.com&fields=symbol,marketState,regularMarketPrice,regularMarketChange,regularMarketChangePercent,regularMarketDayHigh,regularMarketDayLow&symbols={0}";
+        private const string STOCK_URI = @"https://query2.finance.yahoo.com/v11/finance/quoteSummary/{0}?modules=price";
 
-        private static YahooStockProvider instance = null;
+        private static YahooV11StockProvider instance = null;
         private static readonly object objLock = new object();
         private static readonly Dictionary<string, SymbolCache> dictSymbolCache = new Dictionary<string, SymbolCache>();
 
@@ -30,7 +26,7 @@ namespace StockTicker.Backend.Stocks
 
         #region Constructors
 
-        public static YahooStockProvider Instance
+        public static YahooV11StockProvider Instance
         {
             get
             {
@@ -43,14 +39,14 @@ namespace StockTicker.Backend.Stocks
                 {
                     if (instance == null)
                     {
-                        instance = new YahooStockProvider();
+                        instance = new YahooV11StockProvider();
                     }
                     return instance;
                 }
             }
         }
 
-        private YahooStockProvider()
+        private YahooV11StockProvider()
         {
         }
 
@@ -94,7 +90,7 @@ namespace StockTicker.Backend.Stocks
                         return null;
                     }
 
-                    JToken res = obj["quoteResponse"]["result"].First;
+                    JToken res = obj["quoteSummary"]["result"].First;
 
                     StockQuote quote = CreateStockQuote(res);
                     if (quote != null)
@@ -161,16 +157,18 @@ namespace StockTicker.Backend.Stocks
                 return null;
             }
 
+            var quoteData = quoteInfo["price"];
+
             return new StockQuote()
             {
-                Change = (double)quoteInfo["regularMarketChange"],
-                ChangePercent = (double)quoteInfo["regularMarketChangePercent"],
-                Close = (double)quoteInfo["regularMarketPreviousClose"],
-                LatestPrice = (double)quoteInfo["regularMarketPrice"],
-                High = (double)quoteInfo["regularMarketDayHigh"],
-                Low = (double)quoteInfo["regularMarketDayLow"],
-                Symbol = (string)quoteInfo["symbol"],
-                LatestSource = (string)quoteInfo["marketState"]
+                Change = (double)quoteData["regularMarketChange"]["fmt"],
+                ChangePercent = (double)quoteData["regularMarketChangePercent"]["raw"],
+                Close = (double)quoteData["regularMarketPreviousClose"]["raw"],
+                LatestPrice = (double)quoteData["regularMarketPrice"]["raw"],
+                High = (double)quoteData["regularMarketDayHigh"]["raw"],
+                Low = (double)quoteData["regularMarketDayLow"]["raw"],
+                Symbol = (string)quoteData["symbol"],
+                LatestSource = (string)quoteData["marketState"]
             };
         }
 
