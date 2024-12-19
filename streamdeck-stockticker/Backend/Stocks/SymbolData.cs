@@ -5,7 +5,7 @@ namespace StockTicker.Backend.Stocks
 {
     public class SymbolData
     {
-        private static readonly string[] CLOSED_MARKET_STRINGS = new string[] { "Close", "CLOSED" };
+        private static readonly string[] CLOSED_MARKET_STRINGS = new string[] { "Close", "CLOSED", "Closed" };
 
         public string SymbolName { get; private set; }
         public StockQuote Quote { get; private set; }
