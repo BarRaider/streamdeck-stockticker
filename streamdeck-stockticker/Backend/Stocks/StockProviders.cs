@@ -8,6 +8,9 @@ namespace StockTicker.Backend.Stocks
     {
         YAHOO_V6 = 0,
         IEXAPIS = 1,
-        YAHOO_V11 = 2
+        YAHOO_V11 = 2,
+        YAHOO_V7 = 3,
+        YAHOO_V10 = 4,
+        FINNHUB = 5
     }
 }

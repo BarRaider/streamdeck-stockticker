@@ -12,21 +12,27 @@ using static System.Net.WebRequestMethods;
 namespace StockTicker.Backend.Stocks
 {
 
-    public class YahooV11StockProvider : IStockInfoProvider
+    public class YahooV10StockProvider : IStockInfoProvider
     {
         #region Private Members
 
-        private const string STOCK_URI = @"https://query2.finance.yahoo.com/v11/finance/quoteSummary/{0}?modules=price";
+        private const string DEFAULT_COOKIES_URI = @"https://finance.yahoo.com";
+        private const string STOCK_URI = @"https://query2.finance.yahoo.com/v10/finance/quoteSummary/{0}?modules=price&crumb={1}";
+        private const string CRUMB_URI = @"https://query2.finance.yahoo.com/v1/test/getcrumb";
 
-        private static YahooV11StockProvider instance = null;
+        private static YahooV10StockProvider instance = null;
         private static readonly object objLock = new object();
         private static readonly Dictionary<string, SymbolCache> dictSymbolCache = new Dictionary<string, SymbolCache>();
+
+        private HttpClient client;
+        private string crumb = null;
+        private HttpResponseMessage defResponse;
 
         #endregion
 
         #region Constructors
 
-        public static YahooV11StockProvider Instance
+        public static YahooV10StockProvider Instance
         {
             get
             {
@@ -39,15 +45,22 @@ namespace StockTicker.Backend.Stocks
                 {
                     if (instance == null)
                     {
-                        instance = new YahooV11StockProvider();
+                        instance = new YahooV10StockProvider();
                     }
                     return instance;
                 }
             }
         }
 
-        private YahooV11StockProvider()
+        private YahooV10StockProvider()
         {
+            client = new HttpClient()
+            {
+                Timeout = new TimeSpan(0, 0, 10)
+            };
+
+            SetHeaders(client);
+            defResponse = client.GetAsync(DEFAULT_COOKIES_URI).GetAwaiter().GetResult();
         }
 
         public bool TokenExists()
@@ -75,12 +88,17 @@ namespace StockTicker.Backend.Stocks
                     }
                 }
 
-                string queryUrl = String.Format(STOCK_URI, stockSymbol);
+                if (string.IsNullOrEmpty(crumb))
+                {
+                    crumb = await GetCrumb();
+                }
+
+                string queryUrl = String.Format(STOCK_URI, stockSymbol, crumb);
                 HttpResponseMessage response = await StockQuery(queryUrl, null);
+                string body = await response.Content.ReadAsStringAsync();
 
                 if (response.IsSuccessStatusCode)
                 {
-                    string body = await response.Content.ReadAsStringAsync();
                     var obj = JObject.Parse(body);
 
                     // Invalid Stock Symbol
@@ -98,7 +116,7 @@ namespace StockTicker.Backend.Stocks
                         var symbolData = new SymbolData(quote?.Symbol, quote);
 
                         Logger.Instance.LogMessage(TracingLevel.DEBUG, $"DEBUG: Symbol {stockSymbol} Dict: {dictSymbolCache.Count} Quote: {quote.Symbol} SymbolData: {symbolData.SymbolName}");
-    
+
                         dictSymbolCache[stockSymbol] = new SymbolCache(DateTime.Now, symbolData);
                         Logger.Instance.LogMessage(TracingLevel.INFO, $"{this.GetType()} GetSymbol retrieved Symbol: {stockSymbol}");
                         return symbolData;
@@ -106,7 +124,7 @@ namespace StockTicker.Backend.Stocks
                 }
                 else
                 {
-                    Logger.Instance.LogMessage(TracingLevel.ERROR, $"{this.GetType()} GetSymbol obj invalid response: {response.StatusCode}");
+                    Logger.Instance.LogMessage(TracingLevel.ERROR, $"{this.GetType()} GetSymbol obj invalid response: {response.StatusCode} {response.ReasonPhrase} {body}");
 
                     if (response.StatusCode == System.Net.HttpStatusCode.Forbidden)
                     {
@@ -133,21 +151,47 @@ namespace StockTicker.Backend.Stocks
         private async Task<HttpResponseMessage> StockQuery(string uriPath, List<KeyValuePair<string, string>> optionalContent)
         {
             string queryParams = string.Empty;
-            using (HttpClient client = new HttpClient())
-            {
-                client.Timeout = new TimeSpan(0, 0, 10);
 
-                if (optionalContent != null)
+            if (optionalContent != null)
+            {
+                List<string> paramList = new List<string>();
+                foreach (var kvp in optionalContent)
                 {
-                    List<string> paramList = new List<string>();
-                    foreach (var kvp in optionalContent)
-                    {
-                        paramList.Add($"{kvp.Key}={kvp.Value}");
-                    }
-                    queryParams = "?" + string.Join("&", paramList);
+                    paramList.Add($"{kvp.Key}={kvp.Value}");
                 }
-                return await client.GetAsync($"{uriPath}{queryParams}");
+                queryParams = "?" + string.Join("&", paramList);
             }
+            return await client.GetAsync($"{uriPath}{queryParams}");
+        }
+
+        private async Task<string> GetCrumb()
+        {
+            var response = await client.GetAsync(CRUMB_URI);
+            string body = await response.Content.ReadAsStringAsync();
+            if (response.IsSuccessStatusCode)
+            {
+                return body;
+            }
+            else
+            {
+                Logger.Instance.LogMessage(TracingLevel.ERROR, $"{this.GetType()} GetCrumb failed: {response.StatusCode} {response.ReasonPhrase} {body}");
+            }
+            return null;
+        }
+
+        private void SetHeaders(HttpClient client)
+        {
+            client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/112.0");
+            client.DefaultRequestHeaders.Add("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8");
+            client.DefaultRequestHeaders.Add("Accept-Language", "en-US,en;q=0.5");
+            client.DefaultRequestHeaders.Add("Accept-Encoding", "gzip, deflate, br");
+            client.DefaultRequestHeaders.Add("DNT", "1");
+            client.DefaultRequestHeaders.Add("Connection", "keep-alive");
+            client.DefaultRequestHeaders.Add("Upgrade-Insecure-Requests", "1");
+            client.DefaultRequestHeaders.Add("Sec-Fetch-Dest", "document");
+            client.DefaultRequestHeaders.Add("Sec-Fetch-Mode", "navigate");
+            client.DefaultRequestHeaders.Add("Sec-Fetch-Site", "none");
+            client.DefaultRequestHeaders.Add("Sec-Fetch-User", "?1");
         }
 
         private StockQuote CreateStockQuote(JToken quoteInfo)
@@ -162,7 +206,7 @@ namespace StockTicker.Backend.Stocks
             return new StockQuote()
             {
                 Change = (double)quoteData["regularMarketChange"]["fmt"],
-                ChangePercent = double.Parse(quoteData["regularMarketChangePercent"]["fmt"].ToString().Replace("%", "")),
+                ChangePercent = double.Parse(quoteData["regularMarketChangePercent"]["fmt"].ToString().Replace("%","")),
                 Close = (double)quoteData["regularMarketPreviousClose"]["raw"],
                 LatestPrice = (double)quoteData["regularMarketPrice"]["raw"],
                 High = (double)quoteData["regularMarketDayHigh"]["raw"],
