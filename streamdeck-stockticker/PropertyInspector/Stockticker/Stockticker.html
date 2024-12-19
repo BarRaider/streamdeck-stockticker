@@ -6,10 +6,10 @@
     <meta name=apple-mobile-web-app-capable content=yes>
     <meta name=apple-mobile-web-app-status-bar-style content=black>
     <title>BarRaider's Stockticker plugin</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/barraider/streamdeck-easypi@latest/src/sdpi.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/barraider/streamdeck-easypi@latest/src/rangeTooltip.css">
-    <script src="https://cdn.jsdelivr.net/gh/barraider/streamdeck-easypi@latest/src/sdtools.common.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/barraider/streamdeck-easypi@latest/src/rangeTooltip.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/barraider/streamdeck-easypi-v2@latest/src/sdpi.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/barraider/streamdeck-easypi-v2@latest/src/rangeTooltip.css">
+    <script src="https://cdn.jsdelivr.net/gh/barraider/streamdeck-easypi-v2@latest/src/sdtools.common.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/barraider/streamdeck-easypi-v2@latest/src/rangeTooltip.js"></script>
     <script src="../Stockticker.js"></script>
 </head>
 <body>
@@ -20,18 +20,24 @@
         <div class="sdpi-item">
             <div class="sdpi-item-label">Stocks Provider</div>
             <select class="sdpi-item-value select sdProperty" id="stockProvider" oninput="setSettings()">
-                <option value="0">Yahoo Finance v6</option>
-                <option value="2">Yahoo Finance v11</option>
-                <option value="1">iexcloud.io</option>
+                <option value="5">finnhub.io</option>
             </select>
         </div>
         <div id="dvExcloudSettings" style="display:none">
             <details class="message">
-                <summary>NOTE: An API key is now required (click here for more instructions)</summary>
-                <p>The provider of the data we use (iexcloud.io) now requires a Free API token. I am working on finding a free solution that does not require an API token. In the mean time, <span class="linkspan" onclick="openStockWebsite()">Click here</span> for details on how to get a free one from iexcloud.io. </p>
+                <summary>NOTE: An API key is required (click here for more instructions)</summary>
+                <p>The provider (iexcloud.io) requires a *Free* API token. <span class="linkspan" onclick="openIexSupport()">Click here</span> for details on how to get one. </p>
             </details>
+        </div>
+        <div id="dvFinnhubSettings" style="display:none">
+            <details class="message">
+                <summary>NOTE: An API key is required (click here for more instructions)</summary>
+                <p>The provider (finnhub.io) requires a *Free* API token. <span class="linkspan" onclick="openFinSupport()">Click here</span> for details on how to get one. </p>
+            </details>
+        </div>
+        <div id="dvAPIToken" style="display:none">
             <div class="sdpi-item">
-                <div class="sdpi-item-label">iexcloud.io API key</div>
+                <div class="sdpi-item-label">API key</div>
                 <input class="sdpi-item-value sdProperty" placeholder="pk_abcdef01234567890" value="" id="apiToken" oninput="setSettings()">
             </div>
         </div>

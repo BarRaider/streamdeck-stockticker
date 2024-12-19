@@ -1,4 +1,5 @@
 ﻿using BarRaider.SdTools;
+using StockTicker.Backend;
 using System.Collections.Generic;
 
 namespace StockTicker
@@ -10,7 +11,7 @@ namespace StockTicker
             // Uncomment this line of code to allow for debugging
             //while (!System.Diagnostics.Debugger.IsAttached) { System.Threading.Thread.Sleep(100); }
 
-            SDWrapper.Run(args);
+            SDWrapper.Run(args, new UpdateHandler());
         }
     }
 }

@@ -22,10 +22,18 @@
 function showHideSettings(payload) {
     console.log("Show Hide Settings Called");
     setExcloudSettings("none");
+    setAPITokenSettings("none");
+    setFinnhubSettings("none");
+
     setSingleModeSettings("");
     setMultipleModeSettings("none");
-    if (payload['stockProvider'] == 1) {
+    if (payload['stockProvider'] == 5) {
+        setFinnhubSettings("");
+        setAPITokenSettings("");
+    }
+    else  if (payload['stockProvider'] == 1) {
         setExcloudSettings("");
+        setAPITokenSettings("");
     }
 
     if (payload["modeMultiple"]) {
@@ -39,6 +47,16 @@ function setExcloudSettings(displayValue) {
     dvExcloudSettings.style.display = displayValue;
 }
 
+function setAPITokenSettings(displayValue) {
+    var dvAPIToken = document.getElementById('dvAPIToken');
+    dvAPIToken.style.display = displayValue;
+}
+
+function setFinnhubSettings(displayValue) {
+    var dvFinnhubSettings = document.getElementById('dvFinnhubSettings');
+    dvFinnhubSettings.style.display = displayValue;
+}
+
 function setSingleModeSettings(displayValue) {
     var dvSingleModeSettings = document.getElementById('dvSingleModeSettings');
     dvSingleModeSettings.style.display = displayValue;
@@ -49,12 +67,24 @@ function setMultipleModeSettings(displayValue) {
     dvMultipleModeSettings.style.display = displayValue;
 }
 
-function openStockWebsite() {
+function openIexSupport() {
     if (websocket && (websocket.readyState === 1)) {
         const json = {
             'event': 'openUrl',
             'payload': {
-                'url': 'https://github.com/BarRaider/streamdeck-stockticker'
+                'url': 'https://barraider.com/iexsupport'
+            }
+        };
+        websocket.send(JSON.stringify(json));
+    }
+}
+
+function openFinSupport() {
+    if (websocket && (websocket.readyState === 1)) {
+        const json = {
+            'event': 'openUrl',
+            'payload': {
+                'url': 'https://barraider.com/finsupport'
             }
         };
         websocket.send(JSON.stringify(json));
