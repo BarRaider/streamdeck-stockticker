@@ -6,6 +6,9 @@
 <img src="/_images/currency.jpg">
 <img src="/_images/crypto.jpg">
 
+## New in v2.0
+- 🆕 Added support for `finnhub.io` to get live Stocks information
+
 ## New in v1.9
 - CryptoCurrency action has a new `Use US Endpoint` setting which should allow Crypto info for US residents
 - Added support to 2 new Yahoo Endpoints. You can use either v6 or v11, if one goes down you can switch to the other
