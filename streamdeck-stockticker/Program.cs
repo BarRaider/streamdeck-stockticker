@@ -1,6 +1,5 @@
 ﻿using BarRaider.SdTools;
-using StockTicker.Backend;
-using System.Collections.Generic;
+using BRUtils;
 
 namespace StockTicker
 {
